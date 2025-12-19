@@ -17,13 +17,14 @@ public class Organization extends EditorEntity {
     @Id
     @Column(name = "organization_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String name;
     private String code;
     private String phone;
     private String address;
     private String businessRegistrationNumber ;
+    private boolean active = false;
 
     @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<User>();
