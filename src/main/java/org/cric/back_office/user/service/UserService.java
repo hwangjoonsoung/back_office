@@ -3,7 +3,11 @@ package org.cric.back_office.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import org.cric.back_office.user.dto.UserEditDto;
+import org.cric.back_office.user.dto.UserRegistDto;
 import org.cric.back_office.user.entity.User;
+import org.cric.back_office.user.enums.UserStatus;
+import org.cric.back_office.user.repository.UserJpaRepository;
 import org.cric.back_office.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,18 +17,37 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Transactional
     public void saveUser(UserRegistDto userRegistDto) {
-        //user repository에 저장
+        //ai todo: UserRegistDto를 통해 user를 생성 (user entity에 함수 있음)
+        User user = User.createUser(userRegistDto);
+
+        //ai todo: 생성한 user를 userJpaRepository를 통해 저장
+        userJpaRepository.save(user);
     }
 
     @Transactional
-    public void editUser(Long id,UserEditDto userEditDto) {
-        //user repository에서 id로 user의 정보 가져오기
+    public void editUser(Long id, UserEditDto userEditDto) {
+        //ai todo: user repository에서 id로 user의 정보 가져오기 
+        User user = userJpaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 
-        //가져온 정보를 UserEditDto를 통해 정보 update
-        
+        //ai todo: 가져온 정보를 UserEditDto를 통해 정보 update (user entity에 함수 있음)
+        user.settingEditUser(user, userEditDto);
+        userJpaRepository.save(user);
+    }
+
+    @Transactional
+    public void User(Long id) {
+        //ai todo: user repository에서 id로 user의 정보 가져오기
+        User user = userJpaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+
+        //ai todo: 가져온 정보에서 userstatus를 DELETED로 변경
+        user.setUserStatus(UserStatus.DELETED);
+        userJpaRepository.save(user);
     }
 
 }
