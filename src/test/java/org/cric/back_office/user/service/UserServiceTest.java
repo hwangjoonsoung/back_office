@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -74,10 +74,9 @@ class UserServiceTest {
             return savedUser;
         });
 
-        // when
-        assertDoesNotThrow(() -> userService.saveUser(userRegistDto));
-
-        // then
+        // when & then
+        assertThatCode(() -> userService.saveUser(userRegistDto))
+                .doesNotThrowAnyException();
         verify(userJpaRepository, times(1)).save(any(User.class));
     }
 
@@ -88,10 +87,9 @@ class UserServiceTest {
         when(userJpaRepository.findById(testUserId)).thenReturn(Optional.of(testUser));
         when(userJpaRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // when
-        assertDoesNotThrow(() -> userService.editUser(testUserId, userEditDto));
-
-        // then
+        // when & then
+        assertThatCode(() -> userService.editUser(testUserId, userEditDto))
+                .doesNotThrowAnyException();
         verify(userJpaRepository, times(1)).findById(testUserId);
         verify(userJpaRepository, times(1)).save(any(User.class));
     }
@@ -104,12 +102,9 @@ class UserServiceTest {
         when(userJpaRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
 
         // when & then
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.editUser(nonExistentUserId, userEditDto)
-        );
-
-        assertEquals("User not found with id: " + nonExistentUserId, exception.getMessage());
+        assertThatThrownBy(() -> userService.editUser(nonExistentUserId, userEditDto))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("User not found with id: " + nonExistentUserId);
         verify(userJpaRepository, times(1)).findById(nonExistentUserId);
         verify(userJpaRepository, never()).save(any(User.class));
     }
@@ -121,13 +116,12 @@ class UserServiceTest {
         when(userJpaRepository.findById(testUserId)).thenReturn(Optional.of(testUser));
         when(userJpaRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // when
-        assertDoesNotThrow(() -> userService.User(testUserId));
-
-        // then
+        // when & then
+        assertThatCode(() -> userService.User(testUserId))
+                .doesNotThrowAnyException();
         verify(userJpaRepository, times(1)).findById(testUserId);
         verify(userJpaRepository, times(1)).save(any(User.class));
-        assertEquals(UserStatus.DELETED, testUser.getUserStatus());
+        assertThat(testUser.getUserStatus()).isEqualTo(UserStatus.DELETED);
     }
 
     @Test
@@ -138,12 +132,9 @@ class UserServiceTest {
         when(userJpaRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
 
         // when & then
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> userService.User(nonExistentUserId)
-        );
-
-        assertEquals("User not found with id: " + nonExistentUserId, exception.getMessage());
+        assertThatThrownBy(() -> userService.User(nonExistentUserId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("User not found with id: " + nonExistentUserId);
         verify(userJpaRepository, times(1)).findById(nonExistentUserId);
         verify(userJpaRepository, never()).save(any(User.class));
     }
@@ -159,10 +150,10 @@ class UserServiceTest {
         userService.editUser(testUserId, userEditDto);
 
         // then
-        assertEquals(userEditDto.getName(), testUser.getName());
-        assertEquals(userEditDto.getAffiliation(), testUser.getAffiliation());
-        assertEquals(userEditDto.getPosition(), testUser.getPosition());
-        assertEquals(userEditDto.getPhoneNumber(), testUser.getPhoneNumber());
-        assertEquals(userEditDto.getBirthday(), testUser.getBirthday());
+        assertThat(testUser.getName()).isEqualTo(userEditDto.getName());
+        assertThat(testUser.getAffiliation()).isEqualTo(userEditDto.getAffiliation());
+        assertThat(testUser.getPosition()).isEqualTo(userEditDto.getPosition());
+        assertThat(testUser.getPhoneNumber()).isEqualTo(userEditDto.getPhoneNumber());
+        assertThat(testUser.getBirthday()).isEqualTo(userEditDto.getBirthday());
     }
 }

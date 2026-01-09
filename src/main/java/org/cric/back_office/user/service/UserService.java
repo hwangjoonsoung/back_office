@@ -9,9 +9,10 @@ import org.cric.back_office.user.entity.User;
 import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.repository.UserJpaRepository;
 import org.cric.back_office.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Setter
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserService {
