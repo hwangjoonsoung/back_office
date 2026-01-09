@@ -1,4 +1,4 @@
-package org.cric.back_office.entity.common;
+package org.cric.back_office.global.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
