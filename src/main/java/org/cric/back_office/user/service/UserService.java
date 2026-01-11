@@ -3,10 +3,7 @@ package org.cric.back_office.user.service;
 import lombok.RequiredArgsConstructor;
 
 import org.cric.back_office.global.util.JwtUtil;
-import org.cric.back_office.user.dto.LoginRequestDto;
-import org.cric.back_office.user.dto.LoginResponseDto;
-import org.cric.back_office.user.dto.UserEditDto;
-import org.cric.back_office.user.dto.UserRegistDto;
+import org.cric.back_office.user.dto.*;
 import org.cric.back_office.user.entity.User;
 import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.repository.UserJpaRepository;
@@ -32,6 +29,10 @@ public class UserService {
         userRegistDto.setPassword(encodedPassword);
         User user = User.createUser(userRegistDto);
 
+        System.out.println("임시로 회원 가입했을때 승인 상태로 변경--------------------------");
+        user.setUserStatus(UserStatus.APPROVED);
+        System.out.println("--------------------------");
+
         User save = userJpaRepository.save(user);
         return save.getId();
     }
@@ -46,12 +47,17 @@ public class UserService {
     }
 
     @Transactional
-    public void User(Long id) {
+    public void removeUser(Long id) {
         User user = userJpaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 
         user.setUserStatus(UserStatus.DELETED);
         userJpaRepository.save(user);
+    }
+
+    public UserResponseDto findUserById(Long id) {
+        User user = userJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found whth id:" + id));
+        return new UserResponseDto(user);
     }
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {

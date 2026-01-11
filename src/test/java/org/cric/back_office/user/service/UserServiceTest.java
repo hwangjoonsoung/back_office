@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
@@ -129,7 +130,7 @@ class UserServiceTest {
         when(userJpaRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // when & then
-        assertThatCode(() -> userService.User(testUserId))
+        assertThatCode(() -> userService.findUserById(testUserId))
                 .doesNotThrowAnyException();
         verify(userJpaRepository, times(1)).findById(testUserId);
         verify(userJpaRepository, times(1)).save(any(User.class));
@@ -144,7 +145,7 @@ class UserServiceTest {
         when(userJpaRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> userService.User(nonExistentUserId))
+        assertThatThrownBy(() -> userService.findUserById(nonExistentUserId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("User not found with id: " + nonExistentUserId);
         verify(userJpaRepository, times(1)).findById(nonExistentUserId);

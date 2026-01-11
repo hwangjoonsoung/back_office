@@ -3,10 +3,8 @@ spring:
     active: dev
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     show-sql: true
-
-
 jwt:
   secret: xAj34kL!92mv@Tqoe5N8y#Kj72DpAqLopCczmnnQQkQ=
   expiration: 86400000

@@ -176,7 +176,7 @@ class UserRestControllerTest {
     @DisplayName("DELETE /api/users/{id} - 회원 삭제 성공 시 204 No Content를 반환한다")
     void deleteUser_Success_Returns204NoContent() throws Exception {
         // given
-        doNothing().when(userService).User(eq(testUserId));
+        doNothing().when(userService).findUserById(eq(testUserId));
 
         // when
         MvcResult result = mockMvc.perform(delete("/api/users/{id}", testUserId))
@@ -184,7 +184,7 @@ class UserRestControllerTest {
 
         // then
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
-        verify(userService, times(1)).User(eq(testUserId));
+        verify(userService, times(1)).findUserById(eq(testUserId));
     }
 
     @Test
@@ -193,7 +193,7 @@ class UserRestControllerTest {
         // given
         Long nonExistentUserId = 999L;
         doThrow(new IllegalArgumentException("User not found with id: " + nonExistentUserId))
-                .when(userService).User(eq(nonExistentUserId));
+                .when(userService).findUserById(eq(nonExistentUserId));
 
         // when
         MvcResult result = mockMvc.perform(delete("/api/users/{id}", nonExistentUserId))
@@ -201,7 +201,7 @@ class UserRestControllerTest {
 
         // then
         assertThat(result.getResponse().getStatus()).isEqualTo(400);
-        verify(userService, times(1)).User(eq(nonExistentUserId));
+        verify(userService, times(1)).findUserById(eq(nonExistentUserId));
     }
 
     @Test

@@ -3,10 +3,7 @@ package org.cric.back_office.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.global.dto.ApiResponse;
-import org.cric.back_office.user.dto.LoginRequestDto;
-import org.cric.back_office.user.dto.LoginResponseDto;
-import org.cric.back_office.user.dto.UserEditDto;
-import org.cric.back_office.user.dto.UserRegistDto;
+import org.cric.back_office.user.dto.*;
 import org.cric.back_office.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +22,8 @@ public class UserRestController {
     @PostMapping("/api/auth/login")
     public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto loginResponse = userService.login(loginRequestDto);
-        ApiResponse<LoginResponseDto> response = new ApiResponse<>("ok", HttpStatus.OK.value(), loginResponse);
-        return ResponseEntity.ok(response);
+        ApiResponse<LoginResponseDto> response = new ApiResponse<>("ok2", HttpStatus.OK.value(), loginResponse);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
@@ -34,10 +31,10 @@ public class UserRestController {
      * POST /api/users
      */
     @PostMapping("/api/users")
-    public ResponseEntity<ApiResponse<Void>> registerUser(@Valid @RequestBody UserRegistDto userRegistDto) {
+    public ResponseEntity<ApiResponse<Integer>> registerUser(@Valid @RequestBody UserRegistDto userRegistDto) {
         Integer id = userService.saveUser(userRegistDto);
-        ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
-        return ResponseEntity.ok(response);
+        ApiResponse<Integer> response = new ApiResponse("ok", HttpStatus.OK.value(), id);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
@@ -49,7 +46,7 @@ public class UserRestController {
             @PathVariable Long id,
             @Valid @RequestBody UserEditDto userEditDto) {
         userService.editUser(id, userEditDto);
-        ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
+        ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), null);
         return ResponseEntity.ok(response);
     }
 
@@ -59,8 +56,16 @@ public class UserRestController {
      */
     @DeleteMapping("/api/users/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
-        userService.User(id);
-        ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
+        userService.removeUser(id);
+        ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), null);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping("/api/users/{id}")
+    public ResponseEntity<ApiResponse<UserResponseDto>> findUserById(@PathVariable(name = "id") Long id) {
+        UserResponseDto userResponseDto = userService.findUserById(id);
+        ApiResponse<UserResponseDto> apiResponse = new ApiResponse<>("ok", HttpStatus.OK.value(), userResponseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
 }
