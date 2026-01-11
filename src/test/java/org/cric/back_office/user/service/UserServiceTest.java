@@ -1,5 +1,6 @@
 package org.cric.back_office.user.service;
 
+import org.cric.back_office.global.util.JwtUtil;
 import org.cric.back_office.user.dto.UserEditDto;
 import org.cric.back_office.user.dto.UserRegistDto;
 import org.cric.back_office.user.entity.User;
@@ -13,12 +14,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +33,12 @@ class UserServiceTest {
 
     @Mock
     private UserJpaRepository userJpaRepository;
+
+    @Mock
+    private JwtUtil jwtUtil;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
@@ -69,6 +78,8 @@ class UserServiceTest {
     @DisplayName("saveUser - 정상 케이스: User를 성공적으로 저장한다")
     void saveUser_Success() {
         // given
+        String encodedPassword = "$2a$10$encodedPasswordHash";
+        when(passwordEncoder.encode(anyString())).thenReturn(encodedPassword);
         when(userJpaRepository.save(any(User.class))).thenAnswer(invocation -> {
             User savedUser = invocation.getArgument(0);
             return savedUser;
@@ -77,6 +88,7 @@ class UserServiceTest {
         // when & then
         assertThatCode(() -> userService.saveUser(userRegistDto))
                 .doesNotThrowAnyException();
+        verify(passwordEncoder, times(1)).encode(anyString());
         verify(userJpaRepository, times(1)).save(any(User.class));
     }
 

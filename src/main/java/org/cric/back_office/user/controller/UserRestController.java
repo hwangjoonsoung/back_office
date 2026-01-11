@@ -3,6 +3,8 @@ package org.cric.back_office.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.global.dto.ApiResponse;
+import org.cric.back_office.user.dto.LoginRequestDto;
+import org.cric.back_office.user.dto.LoginResponseDto;
 import org.cric.back_office.user.dto.UserEditDto;
 import org.cric.back_office.user.dto.UserRegistDto;
 import org.cric.back_office.user.service.UserService;
@@ -17,6 +19,17 @@ public class UserRestController {
     private final UserService userService;
 
     /**
+     * 로그인 API
+     * POST /api/auth/login
+     */
+    @PostMapping("/api/auth/login")
+    public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        LoginResponseDto loginResponse = userService.login(loginRequestDto);
+        ApiResponse<LoginResponseDto> response = new ApiResponse<>("ok", HttpStatus.OK.value(), loginResponse);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * 회원가입 API
      * POST /api/users
      */
@@ -24,7 +37,7 @@ public class UserRestController {
     public ResponseEntity<ApiResponse<Void>> registerUser(@Valid @RequestBody UserRegistDto userRegistDto) {
         Integer id = userService.saveUser(userRegistDto);
         ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -48,6 +61,6 @@ public class UserRestController {
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.User(id);
         ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

@@ -29,10 +29,18 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+    
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     //query dsl lib 추가
@@ -50,7 +58,7 @@ tasks.named('test') {
 }
 
 
-// QClass가 생성될 경로 설정
+// QueryDSL QClass 생성 경로 설정
 def querydslDir = "$buildDir/generated/querydsl"
 
 // 소스 세트에 QueryDSL 생성 경로 추가 (IDE가 인식하도록)
@@ -59,8 +67,8 @@ sourceSets {
 }
 
 // 컴파일 시 Annotation Processor가 생성한 파일의 저장 위치 지정
-tasks.withType(JavaCompile) {
-    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+tasks.withType(JavaCompile).configureEach {
+    options.generatedSourceOutputDirectory = file(querydslDir)
 }
 
 // clean 태스크 실행 시 생성된 QClass 삭제

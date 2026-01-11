@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.cric.back_office.global.exception.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -70,6 +71,24 @@ public class GlobalExceptionHandler {
                 "입력값 검증에 실패했습니다",
                 request.getRequestURI(),
                 fieldErrors
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
+     * JSON 파싱 오류 처리 (잘못된 JSON 형식, null 요청 본문 등)
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "요청 본문을 읽을 수 없습니다. JSON 형식을 확인해주세요.",
+                request.getRequestURI()
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
