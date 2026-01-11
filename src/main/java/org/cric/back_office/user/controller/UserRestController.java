@@ -2,6 +2,7 @@ package org.cric.back_office.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.cric.back_office.global.dto.ApiResponse;
 import org.cric.back_office.user.dto.UserEditDto;
 import org.cric.back_office.user.dto.UserRegistDto;
 import org.cric.back_office.user.service.UserService;
@@ -20,9 +21,10 @@ public class UserRestController {
      * POST /api/users
      */
     @PostMapping("/api/users")
-    public ResponseEntity<Void> registerUser(@Valid @RequestBody UserRegistDto userRegistDto) {
-        userService.saveUser(userRegistDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<ApiResponse<Void>> registerUser(@Valid @RequestBody UserRegistDto userRegistDto) {
+        Integer id = userService.saveUser(userRegistDto);
+        ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -30,11 +32,12 @@ public class UserRestController {
      * PUT /api/users/{id}
      */
     @PutMapping("/api/users/{id}")
-    public ResponseEntity<Void> updateUser(
+    public ResponseEntity<ApiResponse<Void>> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UserEditDto userEditDto) {
         userService.editUser(id, userEditDto);
-        return ResponseEntity.ok().build();
+        ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -42,8 +45,9 @@ public class UserRestController {
      * DELETE /api/users/{id}
      */
     @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.User(id);
-        return ResponseEntity.noContent().build();
+        ApiResponse<Void> response = new ApiResponse("ok",HttpStatus.OK.value() ,null);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 }

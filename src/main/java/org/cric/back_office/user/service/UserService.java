@@ -21,12 +21,11 @@ public class UserService {
     private final UserJpaRepository userJpaRepository;
 
     @Transactional
-    public void saveUser(UserRegistDto userRegistDto) {
-        //ai todo: UserRegistDto를 통해 user를 생성 (user entity에 함수 있음)
+    public Integer saveUser(UserRegistDto userRegistDto) {
         User user = User.createUser(userRegistDto);
 
-        //ai todo: 생성한 user를 userJpaRepository를 통해 저장
-        userJpaRepository.save(user);
+        User save = userJpaRepository.save(user);
+        return save.getId();
     }
 
     @Transactional
