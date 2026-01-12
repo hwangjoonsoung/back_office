@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.global.dto.ApiResponse;
 import org.cric.back_office.user.dto.*;
+import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,8 +67,8 @@ public class UserRestController {
      * Put /api/users/{id}/changeStatus
      */
     @PutMapping("/api/users/{id}/changeStatus")
-    public ResponseEntity<ApiResponse<Void>> changeUserStatus(@PathVariable Long id,@RequestBody String userStatus) {
-        Integer userId = userService.changeUserStatus(id, userStatus);
+    public ResponseEntity<ApiResponse<Void>> changeUserStatus(@PathVariable Long id,@RequestBody UserStatusDto userStatus) {
+        Integer userId = userService.changeUserStatus(id, userStatus.userStatus());
         ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
