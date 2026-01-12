@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -62,12 +64,14 @@ public class UserService {
         return new UserResponseDto(user);
     }
 
-    public UserResponseDto findUserById(Long id,String userStatus) {
-        User user = userJpaRepository.findByIdAndUserStatus(Integer.parseInt(String.valueOf(id)), UserStatus.valueOf(userStatus));
-        if (user == null) {
-            new IllegalArgumentException("User Not Found With Condition: user=" + id + " and userstatus= " + userStatus);
+    public List<UserResponseDto> findUserByIdWithCondition(FindUserCondition condition) {
+        List<User> users = userRepository.searchUserWithCondition(condition);
+        System.out.println(users);
+        ArrayList<UserResponseDto> userResponseDtoList = new ArrayList<>();
+        for (User user : users) {
+            userResponseDtoList.add(new UserResponseDto(user));
         }
-        return new UserResponseDto(user);
+        return userResponseDtoList;
     }
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {

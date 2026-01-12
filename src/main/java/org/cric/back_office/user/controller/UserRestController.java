@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserRestController {
@@ -82,6 +84,17 @@ public class UserRestController {
         UserResponseDto userResponseDto = userService.findUserById(id);
         ApiResponse<UserResponseDto> apiResponse = new ApiResponse<>("ok", HttpStatus.OK.value(), userResponseDto);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    /**
+     * 조건 줘서 회원 찾기
+     * Get /api/users/{id}
+     */
+    @GetMapping("/api/users/condition")
+    public ResponseEntity<ApiResponse<List<UserResponseDto>>> findUserByIdWithCondition(@RequestBody FindUserCondition condition) {
+        List<UserResponseDto> userByIdWithCondition = userService.findUserByIdWithCondition(condition);
+        ApiResponse<List<UserResponseDto>> response = new ApiResponse<>("ok", HttpStatus.OK.value(), userByIdWithCondition);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

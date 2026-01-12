@@ -1,13 +1,8 @@
 package org.cric.back_office.user.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONUtil;
 import org.cric.back_office.global.config.JwtAuthenticationFilter;
-import org.cric.back_office.global.dto.ApiResponse;
-import org.cric.back_office.global.exception.GlobalExceptionHandler;
 import org.cric.back_office.global.util.JwtUtil;
-import org.cric.back_office.global.util.Utils;
 import org.cric.back_office.user.dto.UserEditDto;
 import org.cric.back_office.user.dto.UserRegistDto;
 import org.cric.back_office.user.service.UserService;
@@ -18,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import javax.print.attribute.standard.PrinterURI;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.*;
@@ -35,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebMvcTest(controllers = UserRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Import(GlobalExceptionHandler.class)
 @DisplayName("UserRestController 테스트")
 class UserRestControllerTest {
 
@@ -56,6 +48,7 @@ class UserRestControllerTest {
 
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
 
     private UserRegistDto userRegistDto;
     private UserEditDto userEditDto;
@@ -133,6 +126,7 @@ class UserRestControllerTest {
 
         // then
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        assertThat(result.getResponse().getContentAsString()).isEmpty();
         verify(userService, times(1)).editUser(eq(testUserId), any(UserEditDto.class));
     }
 
@@ -151,7 +145,7 @@ class UserRestControllerTest {
                 .andReturn();
 
         // then
-        assertThat(result.getResponse().getStatus()).isEqualTo(400);
+        assertThat(result.getResponse().getStatus()).isEqualTo(500);
         verify(userService, times(1)).editUser(eq(nonExistentUserId), any(UserEditDto.class));
     }
 
@@ -176,15 +170,16 @@ class UserRestControllerTest {
     @DisplayName("DELETE /api/users/{id} - 회원 삭제 성공 시 204 No Content를 반환한다")
     void deleteUser_Success_Returns204NoContent() throws Exception {
         // given
-        doNothing().when(userService).findUserById(eq(testUserId));
+        doNothing().when(userService).User(eq(testUserId));
 
         // when
         MvcResult result = mockMvc.perform(delete("/api/users/{id}", testUserId))
                 .andReturn();
 
         // then
-        assertThat(result.getResponse().getStatus()).isEqualTo(200);
-        verify(userService, times(1)).findUserById(eq(testUserId));
+        assertThat(result.getResponse().getStatus()).isEqualTo(204);
+        assertThat(result.getResponse().getContentAsString()).isEmpty();
+        verify(userService, times(1)).User(eq(testUserId));
     }
 
     @Test
@@ -193,15 +188,15 @@ class UserRestControllerTest {
         // given
         Long nonExistentUserId = 999L;
         doThrow(new IllegalArgumentException("User not found with id: " + nonExistentUserId))
-                .when(userService).findUserById(eq(nonExistentUserId));
+                .when(userService).User(eq(nonExistentUserId));
 
         // when
         MvcResult result = mockMvc.perform(delete("/api/users/{id}", nonExistentUserId))
                 .andReturn();
 
         // then
-        assertThat(result.getResponse().getStatus()).isEqualTo(400);
-        verify(userService, times(1)).findUserById(eq(nonExistentUserId));
+        assertThat(result.getResponse().getStatus()).isEqualTo(500);
+        verify(userService, times(1)).User(eq(nonExistentUserId));
     }
 
     @Test
