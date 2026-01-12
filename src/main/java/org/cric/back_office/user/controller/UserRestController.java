@@ -61,6 +61,21 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * 회원 등급 변경 API (상태를 변경)
+     * Put /api/users/{id}/changeStatus
+     */
+    @PutMapping("/api/users/{id}/changeStatus")
+    public ResponseEntity<ApiResponse<Void>> changeUserStatus(@PathVariable Long id,@RequestBody String userStatus) {
+        Integer userId = userService.changeUserStatus(id, userStatus);
+        ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), userId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * 회원 찾기
+     * Get /api/users/{id}
+     */
     @GetMapping("/api/users/{id}")
     public ResponseEntity<ApiResponse<UserResponseDto>> findUserById(@PathVariable(name = "id") Long id) {
         UserResponseDto userResponseDto = userService.findUserById(id);

@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -77,4 +79,10 @@ public class UserService {
         return new LoginResponseDto(token, "Bearer");
     }
 
+    @Transactional
+    public Integer changeUserStatus(Long id,String userStatus) {
+        User user = userJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+        user.setUserStatus(UserStatus.valueOf(userStatus));
+        return user.getId();
+    }
 }
