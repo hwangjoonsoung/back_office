@@ -18,7 +18,7 @@ public class File extends EditorEntity{
     private String originalFileName;
 
     @Column(nullable = false, name = "stored_file_name", length = 100)
-    private String sotredFileName;
+    private String storedFileName;
 
     @Column(nullable = false, length = 20)
     private Integer size;
