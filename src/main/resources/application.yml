@@ -7,4 +7,5 @@ spring:
     show-sql: true
 jwt:
   secret: xAj34kL!92mv@Tqoe5N8y#Kj72DpAqLopCczmnnQQkQ=
-  expiration: 86400000
+  expiration: 3600000 # Access Token: 1시간 (60분)
+  refresh-expiration: 1209600000 # Refresh Token: 14일

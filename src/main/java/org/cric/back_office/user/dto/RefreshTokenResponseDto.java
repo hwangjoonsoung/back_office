@@ -7,15 +7,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDto {
+public class RefreshTokenResponseDto {
 
     private String accessToken;
-    private String refreshToken;
     private String tokenType;
 
-    public LoginResponseDto(String accessToken, String refreshToken) {
+    public RefreshTokenResponseDto(String accessToken) {
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
         this.tokenType = "Bearer";
     }
 }

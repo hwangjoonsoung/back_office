@@ -25,7 +25,29 @@ public class UserRestController {
     @PostMapping("/api/auth/login")
     public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         LoginResponseDto loginResponse = userService.login(loginRequestDto);
-        ApiResponse<LoginResponseDto> response = new ApiResponse<>("ok2", HttpStatus.OK.value(), loginResponse);
+        ApiResponse<LoginResponseDto> response = new ApiResponse<>("ok", HttpStatus.OK.value(), loginResponse);
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * Access Token 재발급 API
+     * POST /api/auth/refresh
+     */
+    @PostMapping("/api/auth/refresh")
+    public ResponseEntity<ApiResponse<RefreshTokenResponseDto>> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
+        RefreshTokenResponseDto refreshResponse = userService.refreshAccessToken(refreshTokenRequestDto.getRefreshToken());
+        ApiResponse<RefreshTokenResponseDto> response = new ApiResponse<>("ok", HttpStatus.OK.value(), refreshResponse);
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 로그아웃 API
+     * POST /api/auth/logout
+     */
+    @PostMapping("/api/auth/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(@RequestBody LogoutRequestDto logoutRequestDto) {
+        userService.logout(logoutRequestDto.getUserId());
+        ApiResponse<Void> response = new ApiResponse<>("ok", HttpStatus.OK.value(), null);
         return ResponseEntity.ok().body(response);
     }
 

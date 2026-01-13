@@ -16,13 +16,19 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}") // 24시간 기본값
+    @Value("${jwt.expiration}") // Access Token 만료 시간
     private Long expiration;
+
+    @Value("${jwt.refresh-expiration}") // Refresh Token 만료 시간
+    private Long refreshExpiration;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Access Token 생성
+     */
     public String generateToken(Integer userId, String email, String name) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
@@ -31,10 +37,34 @@ public class JwtUtil {
                 .subject(String.valueOf(userId))
                 .claim("email", email)
                 .claim("name", name)
+                .claim("tokenType", "ACCESS")
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    /**
+     * Refresh Token 생성
+     */
+    public String generateRefreshToken(Integer userId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + refreshExpiration);
+
+        return Jwts.builder()
+                .subject(String.valueOf(userId))
+                .claim("tokenType", "REFRESH")
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    /**
+     * Refresh Token 만료 시간 반환 (밀리초)
+     */
+    public Long getRefreshExpiration() {
+        return refreshExpiration;
     }
 
     public String getNameFromToken(String token) {
