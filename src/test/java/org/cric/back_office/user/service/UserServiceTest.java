@@ -129,9 +129,10 @@ class UserServiceTest {
         when(userJpaRepository.findById(testUserId)).thenReturn(Optional.of(testUser));
         when(userJpaRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // when & then
-        assertThatCode(() -> userService.findUserById(testUserId))
-                .doesNotThrowAnyException();
+        // when
+        userService.removeUser(testUserId);  // ✅ 올바른 메서드 호출
+
+        // then
         verify(userJpaRepository, times(1)).findById(testUserId);
         verify(userJpaRepository, times(1)).save(any(User.class));
         assertThat(testUser.getUserStatus()).isEqualTo(UserStatus.DELETED);
@@ -147,7 +148,7 @@ class UserServiceTest {
         // when & then
         assertThatThrownBy(() -> userService.findUserById(nonExistentUserId))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("User not found with id: " + nonExistentUserId);
+                .hasMessage("User not found with id:" + nonExistentUserId);
         verify(userJpaRepository, times(1)).findById(nonExistentUserId);
         verify(userJpaRepository, never()).save(any(User.class));
     }

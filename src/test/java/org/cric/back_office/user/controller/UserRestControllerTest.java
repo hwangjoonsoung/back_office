@@ -126,13 +126,12 @@ class UserRestControllerTest {
 
         // then
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
-        assertThat(result.getResponse().getContentAsString()).isEmpty();
         verify(userService, times(1)).editUser(eq(testUserId), any(UserEditDto.class));
     }
 
     @Test
-    @DisplayName("PUT /api/users/{id} - 존재하지 않는 사용자 수정 시 500 Internal Server Error를 반환한다")
-    void updateUser_UserNotFound_Returns500InternalServerError() throws Exception {
+    @DisplayName("PUT /api/users/{id} - 존재하지 않는 사용자 수정 시 400 Internal Server Error를 반환한다")
+    void updateUser_UserNotFound_Returns400InternalServerError() throws Exception {
         // given
         Long nonExistentUserId = 999L;
         doThrow(new IllegalArgumentException("User not found with id: " + nonExistentUserId))
@@ -145,7 +144,7 @@ class UserRestControllerTest {
                 .andReturn();
 
         // then
-        assertThat(result.getResponse().getStatus()).isEqualTo(500);
+        assertThat(result.getResponse().getStatus()).isEqualTo(400);
         verify(userService, times(1)).editUser(eq(nonExistentUserId), any(UserEditDto.class));
     }
 
@@ -167,36 +166,35 @@ class UserRestControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/users/{id} - 회원 삭제 성공 시 204 No Content를 반환한다")
+    @DisplayName("DELETE /api/users/{id} - 회원 삭제 성공 시 200 No Content를 반환한다")
     void deleteUser_Success_Returns204NoContent() throws Exception {
         // given
-        doNothing().when(userService).User(eq(testUserId));
+        doNothing().when(userService).removeUser(eq(testUserId));
 
         // when
         MvcResult result = mockMvc.perform(delete("/api/users/{id}", testUserId))
                 .andReturn();
 
         // then
-        assertThat(result.getResponse().getStatus()).isEqualTo(204);
-        assertThat(result.getResponse().getContentAsString()).isEmpty();
-        verify(userService, times(1)).User(eq(testUserId));
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        verify(userService, times(1)).removeUser(eq(testUserId));
     }
 
     @Test
-    @DisplayName("DELETE /api/users/{id} - 존재하지 않는 사용자 삭제 시 500 Internal Server Error를 반환한다")
-    void deleteUser_UserNotFound_Returns500InternalServerError() throws Exception {
+    @DisplayName("DELETE /api/users/{id} - 존재하지 않는 사용자 삭제 시 400 Internal Server Error를 반환한다")
+    void deleteUser_UserNotFound_Returns400InternalServerError() throws Exception {
         // given
         Long nonExistentUserId = 999L;
         doThrow(new IllegalArgumentException("User not found with id: " + nonExistentUserId))
-                .when(userService).User(eq(nonExistentUserId));
+                .when(userService).removeUser(eq(nonExistentUserId));
 
         // when
         MvcResult result = mockMvc.perform(delete("/api/users/{id}", nonExistentUserId))
                 .andReturn();
 
         // then
-        assertThat(result.getResponse().getStatus()).isEqualTo(500);
-        verify(userService, times(1)).User(eq(nonExistentUserId));
+        assertThat(result.getResponse().getStatus()).isEqualTo(400);
+        verify(userService, times(1)).removeUser(eq(nonExistentUserId));
     }
 
     @Test

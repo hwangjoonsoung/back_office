@@ -60,7 +60,7 @@ public class UserService {
     }
 
     public UserResponseDto findUserById(Long id) {
-        User user = userJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found whth id:" + id));
+        User user = userJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found with id:" + id));
         return new UserResponseDto(user);
     }
 
