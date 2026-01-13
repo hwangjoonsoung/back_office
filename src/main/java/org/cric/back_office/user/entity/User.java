@@ -52,6 +52,9 @@ public class User extends EditorEntity {
         this.position = userRegistDto.getPosition();
         this.phoneNumber = userRegistDto.getPhoneNumber();
         this.birthday = userRegistDto.getBirthday();
+
+        setCreateBy(userRegistDto.getName());
+        setUpdateBy(userRegistDto.getName());
         return this;
     }
 

@@ -86,7 +86,7 @@ public class UserService {
             throw new IllegalArgumentException("승인되지 않은 사용자입니다");
         }
 
-        String token = jwtUtil.generateToken(user.getId(), user.getEmail());
+        String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName());
 
         return new LoginResponseDto(token, "Bearer");
     }
