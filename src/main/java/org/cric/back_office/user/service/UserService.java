@@ -2,6 +2,7 @@ package org.cric.back_office.user.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.cric.back_office.global.service.TokenService;
 import org.cric.back_office.global.util.JwtUtil;
 import org.cric.back_office.user.dto.*;
 import org.cric.back_office.user.entity.RefreshToken;
@@ -29,6 +30,7 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     @Transactional
     public Integer saveUser(UserRegistDto userRegistDto){
@@ -90,11 +92,17 @@ public class UserService {
             throw new IllegalArgumentException("승인되지 않은 사용자입니다");
         }
 
-        // Access Token 생성
-        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName());
+        // 토큰 ID 생성 (중복 로그인 방지용)
+        String tokenId = jwtUtil.generateTokenId();
+        
+        // Access Token 생성 (tokenId 포함)
+        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), tokenId);
         
         // Refresh Token 생성
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
+        
+        // Redis에 토큰 ID 저장 (기존 토큰 자동 무효화)
+        tokenService.saveTokenId(user.getId(), tokenId, jwtUtil.getAccessTokenExpiration());
         
         // Refresh Token DB 저장 (기존 토큰이 있으면 업데이트, 없으면 새로 생성)
         saveOrUpdateRefreshToken(user.getId(), refreshToken);
@@ -124,14 +132,23 @@ public class UserService {
         User user = userJpaRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다"));
 
-        // 새로운 Access Token 생성
-        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName());
+        // 새로운 토큰 ID 생성 (중복 로그인 방지용)
+        String newTokenId = jwtUtil.generateTokenId();
+        
+        // 새로운 Access Token 생성 (tokenId 포함)
+        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), newTokenId);
+        
+        // Redis에 새 토큰 ID 저장 (기존 토큰 자동 무효화)
+        tokenService.saveTokenId(user.getId(), newTokenId, jwtUtil.getAccessTokenExpiration());
 
         return new RefreshTokenResponseDto(newAccessToken);
     }
 
     @Transactional
     public void logout(Integer userId) {
+        // Redis에서 토큰 ID 삭제 (현재 세션 무효화)
+        tokenService.removeTokenId(userId);
+        // DB에서 Refresh Token 삭제
         refreshTokenRepository.deleteByUserId(userId);
     }
 

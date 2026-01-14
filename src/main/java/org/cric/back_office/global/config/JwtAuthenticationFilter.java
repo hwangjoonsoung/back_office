@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.cric.back_office.global.service.TokenService;
 import org.cric.back_office.global.util.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,9 +20,11 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, TokenService tokenService) {
         this.jwtUtil = jwtUtil;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -35,6 +38,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token)) {
                 Integer userId = jwtUtil.getUserIdFromToken(token);
+                String tokenId = jwtUtil.getTokenIdFromToken(token);
+                
+                // Redis에서 토큰 ID 유효성 검증 (중복 로그인 방지)
+                if (!tokenService.validateTokenId(userId, tokenId)) {
+                    // 다른 기기에서 로그인하여 현재 토큰이 무효화됨
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"error\": \"다른 기기에서 로그인하여 현재 세션이 종료되었습니다.\"}");
+                    return;
+                }
+                
                 String email = jwtUtil.getEmailFromToken(token);
                 String name = jwtUtil.getNameFromToken(token);
 

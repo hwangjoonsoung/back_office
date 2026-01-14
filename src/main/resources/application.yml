@@ -5,6 +5,10 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 jwt:
   secret: xAj34kL!92mv@Tqoe5N8y#Kj72DpAqLopCczmnnQQkQ=
   expiration: 3600000 # Access Token: 1시간 (60분)

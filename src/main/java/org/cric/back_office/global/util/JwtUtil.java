@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtUtil {
@@ -27,9 +28,9 @@ public class JwtUtil {
     }
 
     /**
-     * Access Token 생성
+     * Access Token 생성 (tokenId 포함)
      */
-    public String generateToken(Integer userId, String email, String name) {
+    public String generateToken(Integer userId, String email, String name, String tokenId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
@@ -37,11 +38,26 @@ public class JwtUtil {
                 .subject(String.valueOf(userId))
                 .claim("email", email)
                 .claim("name", name)
+                .claim("tokenId", tokenId)
                 .claim("tokenType", "ACCESS")
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    /**
+     * 새로운 토큰 ID 생성
+     */
+    public String generateTokenId() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * Access Token 만료 시간 반환 (밀리초)
+     */
+    public Long getAccessTokenExpiration() {
+        return expiration;
     }
 
     /**
@@ -88,6 +104,11 @@ public class JwtUtil {
     public String getEmailFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         return claims.get("email", String.class);
+    }
+
+    public String getTokenIdFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("tokenId", String.class);
     }
 
     public boolean validateToken(String token) {
