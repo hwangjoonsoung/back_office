@@ -5,6 +5,7 @@ import lombok.*;
 import org.cric.back_office.global.entity.EditorEntity;
 import org.cric.back_office.user.dto.UserEditDto;
 import org.cric.back_office.user.dto.UserRegistDto;
+import org.cric.back_office.user.enums.ServiceUserRoll;
 import org.cric.back_office.user.enums.UserStatus;
 
 import java.time.LocalDate;
@@ -36,13 +37,16 @@ public class User extends EditorEntity {
     private String position;
     @Column(nullable = false, length = 20, unique = true, name = "phone_name")
     private String phoneNumber;
-
     @Column(nullable = false, name = "birth_day")
     private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "user_status", length = 10)
     private UserStatus userStatus =UserStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "user_roll", length = 10)
+    private ServiceUserRoll userRoll = ServiceUserRoll.GENERAL;
 
     public User settingRegistUser(UserRegistDto userRegistDto) {
         this.email = userRegistDto.getEmail();

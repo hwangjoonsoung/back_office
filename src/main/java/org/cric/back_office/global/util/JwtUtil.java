@@ -28,9 +28,9 @@ public class JwtUtil {
     }
 
     /**
-     * Access Token 생성 (tokenId 포함)
+     * Access Token 생성 (tokenId, role 포함)
      */
-    public String generateToken(Integer userId, String email, String name, String tokenId) {
+    public String generateToken(Integer userId, String email, String name, String tokenId, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
@@ -39,6 +39,7 @@ public class JwtUtil {
                 .claim("email", email)
                 .claim("name", name)
                 .claim("tokenId", tokenId)
+                .claim("role", role)
                 .claim("tokenType", "ACCESS")
                 .issuedAt(now)
                 .expiration(expiryDate)
@@ -118,5 +119,10 @@ public class JwtUtil {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String getRoleFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("role", String.class);
     }
 }

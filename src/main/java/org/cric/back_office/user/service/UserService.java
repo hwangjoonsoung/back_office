@@ -95,8 +95,8 @@ public class UserService {
         // 토큰 ID 생성 (중복 로그인 방지용)
         String tokenId = jwtUtil.generateTokenId();
         
-        // Access Token 생성 (tokenId 포함)
-        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), tokenId);
+        // Access Token 생성 (tokenId, role 포함)
+        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), tokenId, user.getUserRoll().name());
         
         // Refresh Token 생성
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
@@ -107,7 +107,7 @@ public class UserService {
         // Refresh Token DB 저장 (기존 토큰이 있으면 업데이트, 없으면 새로 생성)
         saveOrUpdateRefreshToken(user.getId(), refreshToken);
 
-        return new LoginResponseDto(accessToken, refreshToken);
+        return new LoginResponseDto(accessToken, refreshToken, user.getUserRoll());
     }
 
     @Transactional
@@ -135,8 +135,8 @@ public class UserService {
         // 새로운 토큰 ID 생성 (중복 로그인 방지용)
         String newTokenId = jwtUtil.generateTokenId();
         
-        // 새로운 Access Token 생성 (tokenId 포함)
-        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), newTokenId);
+        // 새로운 Access Token 생성 (tokenId, role 포함)
+        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), newTokenId, user.getUserRoll().name());
         
         // Redis에 새 토큰 ID 저장 (기존 토큰 자동 무효화)
         tokenService.saveTokenId(user.getId(), newTokenId, jwtUtil.getAccessTokenExpiration());
