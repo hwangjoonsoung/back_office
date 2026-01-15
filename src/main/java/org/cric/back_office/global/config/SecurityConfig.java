@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/users").permitAll()
+                        .requestMatchers("/resources/js/**","/resources/css/**","/api/auth/login", "/api/users").permitAll()
+                        // GOD 권한만 접근 가능한 API
+                        .requestMatchers("/admin/**").hasRole("GOD")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
