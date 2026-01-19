@@ -33,7 +33,7 @@ public class UserService {
     private final TokenService tokenService;
 
     @Transactional
-    public Integer saveUser(UserRegistDto userRegistDto){
+    public Integer saveUser(UserRegistDto userRegistDto) {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userRegistDto.getPassword());
         userRegistDto.setPassword(encodedPassword);
@@ -62,7 +62,8 @@ public class UserService {
     }
 
     public UserResponseDto findUserById(Long id) {
-        User user = userJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found with id:" + id));
+        User user = userJpaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id:" + id));
         return new UserResponseDto(user);
     }
 
@@ -90,16 +91,17 @@ public class UserService {
 
         // 토큰 ID 생성 (중복 로그인 방지용)
         String tokenId = jwtUtil.generateTokenId();
-        
+
         // Access Token 생성 (tokenId, role 포함)
-        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), tokenId, user.getUserRole().name());
-        
+        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), tokenId,
+                user.getUserRole().name());
+
         // Refresh Token 생성
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
-        
+
         // Redis에 토큰 ID 저장 (기존 토큰 자동 무효화)
         tokenService.saveTokenId(user.getId(), tokenId, jwtUtil.getAccessTokenExpiration());
-        
+
         // Refresh Token DB 저장 (기존 토큰이 있으면 업데이트, 없으면 새로 생성)
         saveOrUpdateRefreshToken(user.getId(), refreshToken);
 
@@ -129,14 +131,22 @@ public class UserService {
 
         // 새로운 토큰 ID 생성 (중복 로그인 방지용)
         String newTokenId = jwtUtil.generateTokenId();
-        
+
         // 새로운 Access Token 생성 (tokenId, role 포함)
-        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), newTokenId, user.getUserRole().name());
-        
+        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), newTokenId,
+                user.getUserRole().name());
+
+        // Refresh Token Rotation (RTR): 새로운 Refresh Token 생성
+        String newRefreshToken = jwtUtil.generateRefreshToken(user.getId());
+        LocalDateTime newExpiryDate = LocalDateTime.now().plusSeconds(jwtUtil.getRefreshExpiration() / 1000);
+
+        // DB의 Refresh Token 교체 (Rotation)
+        storedToken.updateToken(newRefreshToken, newExpiryDate);
+
         // Redis에 새 토큰 ID 저장 (기존 토큰 자동 무효화)
         tokenService.saveTokenId(user.getId(), newTokenId, jwtUtil.getAccessTokenExpiration());
 
-        return new RefreshTokenResponseDto(newAccessToken);
+        return new RefreshTokenResponseDto(newAccessToken, newRefreshToken);
     }
 
     @Transactional
@@ -152,7 +162,7 @@ public class UserService {
                 .plusSeconds(jwtUtil.getRefreshExpiration() / 1000);
 
         Optional<RefreshToken> existingToken = refreshTokenRepository.findByUserId(userId);
-        
+
         if (existingToken.isPresent()) {
             // 기존 토큰 업데이트
             existingToken.get().updateToken(refreshToken, expiryDate);
@@ -168,8 +178,9 @@ public class UserService {
     }
 
     @Transactional
-    public Integer changeUserStatus(Long id,String userStatus) {
-        User user = userJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+    public Integer changeUserStatus(Long id, String userStatus) {
+        User user = userJpaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
         user.setUserStatus(UserStatus.valueOf(userStatus));
         return user.getId();
     }
