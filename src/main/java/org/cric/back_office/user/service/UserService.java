@@ -39,10 +39,6 @@ public class UserService {
         userRegistDto.setPassword(encodedPassword);
         User user = User.createUser(userRegistDto);
 
-        System.out.println("임시로 회원 가입했을때 승인 상태로 변경--------------------------");
-        user.setUserStatus(UserStatus.APPROVED);
-        System.out.println("--------------------------");
-
         User save = userJpaRepository.save(user);
         return save.getId();
     }
@@ -96,7 +92,7 @@ public class UserService {
         String tokenId = jwtUtil.generateTokenId();
         
         // Access Token 생성 (tokenId, role 포함)
-        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), tokenId, user.getUserRoll().name());
+        String accessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), tokenId, user.getUserRole().name());
         
         // Refresh Token 생성
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
@@ -107,7 +103,7 @@ public class UserService {
         // Refresh Token DB 저장 (기존 토큰이 있으면 업데이트, 없으면 새로 생성)
         saveOrUpdateRefreshToken(user.getId(), refreshToken);
 
-        return new LoginResponseDto(accessToken, refreshToken, user.getUserRoll());
+        return new LoginResponseDto(accessToken, refreshToken, user.getUserRole());
     }
 
     @Transactional
@@ -123,8 +119,7 @@ public class UserService {
 
         // 만료 여부 확인
         if (storedToken.isExpired()) {
-            refreshTokenRepository.delete(storedToken);
-            throw new IllegalArgumentException("만료된 refresh token입니다");
+            throw new IllegalArgumentException("만료된 refresh token입니다. 다시 로그인해주세요.");
         }
 
         // 사용자 정보 조회
@@ -136,7 +131,7 @@ public class UserService {
         String newTokenId = jwtUtil.generateTokenId();
         
         // 새로운 Access Token 생성 (tokenId, role 포함)
-        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), newTokenId, user.getUserRoll().name());
+        String newAccessToken = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getName(), newTokenId, user.getUserRole().name());
         
         // Redis에 새 토큰 ID 저장 (기존 토큰 자동 무효화)
         tokenService.saveTokenId(user.getId(), newTokenId, jwtUtil.getAccessTokenExpiration());

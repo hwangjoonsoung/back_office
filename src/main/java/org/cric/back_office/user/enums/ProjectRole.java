@@ -1,6 +1,6 @@
 package org.cric.back_office.user.enums;
 
-public enum ProjectUserRoll {
+public enum ProjectRole {
     CREATER,
     EDITOR,
     READER

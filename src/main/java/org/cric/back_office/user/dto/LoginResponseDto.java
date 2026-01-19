@@ -3,7 +3,7 @@ package org.cric.back_office.user.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.cric.back_office.user.enums.ServiceUserRoll;
+import org.cric.back_office.user.enums.UserRole;
 
 @Getter
 @NoArgsConstructor
@@ -13,9 +13,9 @@ public class LoginResponseDto {
     private String accessToken;
     private String refreshToken;
     private String tokenType;
-    private ServiceUserRoll userRoll;
+    private UserRole userRoll;
 
-    public LoginResponseDto(String accessToken, String refreshToken, ServiceUserRoll userRoll) {
+    public LoginResponseDto(String accessToken, String refreshToken, UserRole userRoll) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.tokenType = "Bearer";

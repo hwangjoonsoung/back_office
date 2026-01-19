@@ -5,6 +5,7 @@ import org.cric.back_office.global.util.JwtUtil;
 import org.cric.back_office.user.dto.LoginRequestDto;
 import org.cric.back_office.user.dto.LoginResponseDto;
 import org.cric.back_office.user.entity.User;
+import org.cric.back_office.user.enums.UserRole;
 import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.repository.RefreshTokenRepository;
 import org.cric.back_office.user.repository.UserJpaRepository;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -25,6 +28,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("중복 로그인 방지 테스트")
 class DuplicateLoginTest {
 
@@ -59,8 +63,7 @@ class DuplicateLoginTest {
                 refreshTokenRepository,
                 jwtUtil,
                 passwordEncoder,
-                tokenService
-        );
+                tokenService);
 
         // 테스트용 사용자 설정
         testUser = mock(User.class);
@@ -69,6 +72,7 @@ class DuplicateLoginTest {
         when(testUser.getName()).thenReturn("테스트");
         when(testUser.getPassword()).thenReturn("encodedPassword");
         when(testUser.getUserStatus()).thenReturn(UserStatus.APPROVED);
+        when(testUser.getUserRole()).thenReturn(UserRole.GENERAL);
 
         // 로그인 요청 DTO
         loginRequest = new LoginRequestDto();
@@ -83,7 +87,8 @@ class DuplicateLoginTest {
         when(userJpaRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.generateTokenId()).thenReturn("token-id-123");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString())).thenReturn("access-token");
+        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+                .thenReturn("access-token");
         when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
         when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
@@ -105,7 +110,8 @@ class DuplicateLoginTest {
         when(jwtUtil.generateTokenId())
                 .thenReturn("first-token-id")
                 .thenReturn("second-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString())).thenReturn("access-token");
+        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+                .thenReturn("access-token");
         when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
         when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
@@ -131,7 +137,8 @@ class DuplicateLoginTest {
         when(jwtUtil.generateTokenId())
                 .thenReturn("first-token-id")
                 .thenReturn("second-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString())).thenReturn("access-token");
+        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+                .thenReturn("access-token");
         when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
         when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
@@ -155,7 +162,8 @@ class DuplicateLoginTest {
         when(userJpaRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.generateTokenId()).thenReturn("unique-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString())).thenReturn("access-token");
+        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+                .thenReturn("access-token");
         when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
         when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
@@ -168,7 +176,8 @@ class DuplicateLoginTest {
                 eq(1),
                 eq("test@test.com"),
                 eq("테스트"),
-                eq("unique-token-id")  // tokenId가 포함되어 호출되는지 확인
+                eq("unique-token-id"), // tokenId가 포함되어 호출되는지 확인
+                eq("GENERAL") // role이 포함되어 호출되는지 확인
         );
     }
 
@@ -195,9 +204,9 @@ class DuplicateLoginTest {
         when(jwtUtil.generateTokenId())
                 .thenReturn("first-token-id")
                 .thenReturn("second-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), eq("first-token-id")))
+        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), eq("first-token-id"), anyString()))
                 .thenReturn("access-token-1");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), eq("second-token-id")))
+        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), eq("second-token-id"), anyString()))
                 .thenReturn("access-token-2");
         when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
