@@ -13,6 +13,7 @@
     </style>
 </head>
 <script th:src="@{/js/tailwind.js}"></script>
+<script th:src="@{/js/jquery-4.0.0.min.js}"></script>
 
 <body class="h-screen flex flex-col font-sans">
 
@@ -68,56 +69,45 @@
                 </form>
 
                 <script>
-                    document.getElementById('registerForm').addEventListener('submit', async function (e) {
-                        e.preventDefault();
+                    $(document).ready(function () {
+                        $('#registerForm').on('submit', function (e) {
+                            e.preventDefault();
 
-                        const errorDiv = document.getElementById('errorMessage');
-                        const successDiv = document.getElementById('successMessage');
-                        const submitBtn = document.getElementById('submitBtn');
+                            const $errorDiv = $('#errorMessage');
+                            const $successDiv = $('#successMessage');
+                            const $submitBtn = $('#submitBtn');
 
-                        // 메시지 초기화
-                        errorDiv.classList.add('hidden');
-                        successDiv.classList.add('hidden');
+                            // 메시지 초기화
+                            $errorDiv.addClass('hidden');
+                            $successDiv.addClass('hidden');
 
-                        // 버튼 비활성화
-                        submitBtn.disabled = true;
-                        submitBtn.textContent = '처리 중...';
+                            // 버튼 비활성화
+                            $submitBtn.prop('disabled', true).text('처리 중...');
 
-                        const formData = {
-                            email: document.getElementById('email').value,
-                            password: document.getElementById('password').value,
-                            name: document.getElementById('name').value
-                        };
+                            const formData = {
+                                email: $('#email').val(),
+                                password: $('#password').val(),
+                                name: $('#name').val()
+                            };
 
-                        try {
-                            const response = await fetch('/api/user', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
+                            $.ajax({
+                                url: '/api/user',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(formData),
+                                success: function (result) {
+                                    $successDiv.text('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.').removeClass('hidden');
+                                    setTimeout(function () {
+                                        window.location.href = '/';
+                                    }, 1500);
                                 },
-                                body: JSON.stringify(formData)
+                                error: function (xhr) {
+                                    const result = xhr.responseJSON || {};
+                                    $errorDiv.text(result.message || '회원가입에 실패했습니다.').removeClass('hidden');
+                                    $submitBtn.prop('disabled', false).text('회원가입');
+                                }
                             });
-
-                            const result = await response.json();
-
-                            if (response.ok) {
-                                successDiv.textContent = '회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.';
-                                successDiv.classList.remove('hidden');
-                                setTimeout(() => {
-                                    window.location.href = '/';
-                                }, 1500);
-                            } else {
-                                errorDiv.textContent = result.message || '회원가입에 실패했습니다.';
-                                errorDiv.classList.remove('hidden');
-                                submitBtn.disabled = false;
-                                submitBtn.textContent = '회원가입';
-                            }
-                        } catch (error) {
-                            errorDiv.textContent = '서버 오류가 발생했습니다. 다시 시도해주세요.';
-                            errorDiv.classList.remove('hidden');
-                            submitBtn.disabled = false;
-                            submitBtn.textContent = '회원가입';
-                        }
+                        });
                     });
                 </script>
             </div>
