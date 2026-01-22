@@ -29,11 +29,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/resources/js/**","/resources/css/**","/api/auth/login", "/api/users").permitAll()
+                        .requestMatchers("/js/**", "/css/**", "/images/**", "/api/auth/login", "/api/user", "/", "/user/new")
+                        .permitAll()
                         // GOD 권한만 접근 가능한 API
                         .requestMatchers("/admin/**").hasRole("GOD")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
