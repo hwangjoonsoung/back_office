@@ -1,5 +1,7 @@
 package org.cric.back_office.user.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.global.dto.ApiResponse;
@@ -23,8 +25,25 @@ public class UserRestController {
      * POST /api/auth/login
      */
     @PostMapping("/api/auth/login")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> login(
+            @Valid @RequestBody LoginRequestDto loginRequestDto,
+            HttpServletResponse httpResponse) {
         LoginResponseDto loginResponse = userService.login(loginRequestDto);
+
+        // Access Token 쿠키 설정 (HttpOnly, Secure 권장)
+        Cookie accessTokenCookie = new Cookie("accessToken", loginResponse.getAccessToken());
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(60 * 60); // 1시간
+        httpResponse.addCookie(accessTokenCookie);
+
+        // Refresh Token 쿠키 설정
+        Cookie refreshTokenCookie = new Cookie("refreshToken", loginResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일
+        httpResponse.addCookie(refreshTokenCookie);
+
         ApiResponse<LoginResponseDto> response = new ApiResponse<>("ok", HttpStatus.OK.value(), loginResponse);
         return ResponseEntity.ok().body(response);
     }
@@ -34,8 +53,26 @@ public class UserRestController {
      * POST /api/auth/refresh
      */
     @PostMapping("/api/auth/refresh")
-    public ResponseEntity<ApiResponse<RefreshTokenResponseDto>> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
-        RefreshTokenResponseDto refreshResponse = userService.refreshAccessToken(refreshTokenRequestDto.getRefreshToken());
+    public ResponseEntity<ApiResponse<RefreshTokenResponseDto>> refreshToken(
+            @Valid @RequestBody RefreshTokenRequestDto refreshTokenRequestDto,
+            HttpServletResponse httpResponse) {
+        RefreshTokenResponseDto refreshResponse = userService
+                .refreshAccessToken(refreshTokenRequestDto.getRefreshToken());
+
+        // 새로운 Access Token 쿠키 설정
+        Cookie accessTokenCookie = new Cookie("accessToken", refreshResponse.getAccessToken());
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(60 * 60); // 1시간
+        httpResponse.addCookie(accessTokenCookie);
+
+        // 새로운 Refresh Token 쿠키 설정 (RTR)
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일
+        httpResponse.addCookie(refreshTokenCookie);
+
         ApiResponse<RefreshTokenResponseDto> response = new ApiResponse<>("ok", HttpStatus.OK.value(), refreshResponse);
         return ResponseEntity.ok().body(response);
     }
@@ -45,17 +82,33 @@ public class UserRestController {
      * POST /api/auth/logout
      */
     @PostMapping("/api/auth/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(@RequestBody LogoutRequestDto logoutRequestDto) {
+    public ResponseEntity<ApiResponse<Void>> logout(
+            @RequestBody LogoutRequestDto logoutRequestDto,
+            HttpServletResponse httpResponse) {
         userService.logout(logoutRequestDto.getUserId());
+
+        // 쿠키 삭제
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0);
+        httpResponse.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+        httpResponse.addCookie(refreshTokenCookie);
+
         ApiResponse<Void> response = new ApiResponse<>("ok", HttpStatus.OK.value(), null);
         return ResponseEntity.ok().body(response);
     }
 
     /**
      * 회원가입 API
-     * POST /api/users
+     * POST /api/user
      */
-    @PostMapping("/api/users")
+    @PostMapping("/api/user")
     public ResponseEntity<ApiResponse<Integer>> registerUser(@Valid @RequestBody UserRegistDto userRegistDto) {
         Integer id = userService.saveUser(userRegistDto);
         ApiResponse<Integer> response = new ApiResponse("ok", HttpStatus.OK.value(), id);
@@ -64,9 +117,9 @@ public class UserRestController {
 
     /**
      * 회원 정보 수정 API
-     * PUT /api/users/{id}
+     * PUT /api/user/{id}
      */
-    @PutMapping("/api/users/{id}")
+    @PutMapping("/api/user/{id}")
     public ResponseEntity<ApiResponse<Void>> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UserEditDto userEditDto) {
@@ -77,9 +130,9 @@ public class UserRestController {
 
     /**
      * 회원 삭제 API (상태를 DELETED로 변경)
-     * DELETE /api/users/{id}
+     * DELETE /api/user/{id}
      */
-    @DeleteMapping("/api/users/{id}")
+    @DeleteMapping("/api/user/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.removeUser(id);
         ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), null);
@@ -88,10 +141,11 @@ public class UserRestController {
 
     /**
      * 회원 등급 변경 API (상태를 변경)
-     * Put /api/users/{id}/changeStatus
+     * Put /api/user/{id}/changeStatus
      */
-    @PutMapping("/api/users/{id}/changeStatus")
-    public ResponseEntity<ApiResponse<Void>> changeUserStatus(@PathVariable Long id,@RequestBody UserStatusDto userStatus) {
+    @PutMapping("/api/user/{id}/changeStatus")
+    public ResponseEntity<ApiResponse<Void>> changeUserStatus(@PathVariable Long id,
+            @RequestBody UserStatusDto userStatus) {
         Integer userId = userService.changeUserStatus(id, userStatus.userStatus());
         ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -99,9 +153,9 @@ public class UserRestController {
 
     /**
      * 회원 찾기
-     * Get /api/users/{id}
+     * Get /api/user/{id}
      */
-    @GetMapping("/api/users/{id}")
+    @GetMapping("/api/user/{id}")
     public ResponseEntity<ApiResponse<UserResponseDto>> findUserById(@PathVariable(name = "id") Long id) {
         UserResponseDto userResponseDto = userService.findUserById(id);
         ApiResponse<UserResponseDto> apiResponse = new ApiResponse<>("ok", HttpStatus.OK.value(), userResponseDto);
@@ -110,12 +164,14 @@ public class UserRestController {
 
     /**
      * 조건 줘서 회원 찾기
-     * Get /api/users/{id}
+     * Get /api/user/{id}
      */
-    @GetMapping("/api/users/condition")
-    public ResponseEntity<ApiResponse<List<UserResponseDto>>> findUserByIdWithCondition(@RequestBody FindUserCondition condition) {
+    @GetMapping("/api/user/condition")
+    public ResponseEntity<ApiResponse<List<UserResponseDto>>> findUserByIdWithCondition(
+            @RequestBody FindUserCondition condition) {
         List<UserResponseDto> userByIdWithCondition = userService.findUserByIdWithCondition(condition);
-        ApiResponse<List<UserResponseDto>> response = new ApiResponse<>("ok", HttpStatus.OK.value(), userByIdWithCondition);
+        ApiResponse<List<UserResponseDto>> response = new ApiResponse<>("ok", HttpStatus.OK.value(),
+                userByIdWithCondition);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

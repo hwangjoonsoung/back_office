@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Back Office - 로그인</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<script th:src="@{/js/tailwind.js}"></script>
+<script th:src="@{/js/jquery-4.0.0.min.js}"></script>
+
+<body class="h-screen flex flex-col font-sans">
+
+    <main class="flex-grow flex items-center justify-center px-4">
+        <div
+            class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-gray-700 rounded-xl p-8 bg-[#1e1e1e] shadow-2xl">
+
+            <div class="flex flex-col items-center justify-center space-y-4 border-r border-gray-700 md:pr-8">
+                <div
+                    class="w-32 h-32 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <span class="text-4xl font-bold italic">LOGO</span>
+                </div>
+                <h1 class="text-2xl font-semibold tracking-tight">CRIC Admin</h1>
+                <p class="text-gray-400 text-sm text-center">서비스의 효율적인 관리를 위한 <br />백오피스 시스템입니다.</p>
+            </div>
+
+            <div class="flex flex-col space-y-6">
+                <h2 class="text-xl font-medium border-l-4 border-indigo-500 pl-3">Sign In</h2>
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Email</label>
+                        <input type="email" name="email" id="email" required
+                            class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
+                            placeholder="이메일을 입력하세요">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Password</label>
+                        <input type="password" name="password" id="password" required
+                            class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
+                            placeholder="비밀번호를 입력하세요">
+                    </div>
+                    <div id="errorMessage"
+                        class="hidden text-red-500 text-sm text-center py-2 bg-red-500/10 rounded-lg"></div>
+                    <div id="successMessage"
+                        class="hidden text-green-500 text-sm text-center py-2 bg-green-500/10 rounded-lg"></div>
+                    <button type="submit" id="submitBtn"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition-transform active:scale-95">
+                        로그인
+                    </button>
+                    <div class="flex items-center justify-between text-xs text-gray-400 px-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="rememberMe" class="accent-indigo-500">
+                            <span>계정 기억하기</span>
+                        </label>
+                        <a th:href="@{/user/new}" class="hover:text-white transition-colors">회원가입</a>
+                        <a href="#" class="hover:text-white transition-colors">비밀번호를 잊으셨나요?</a>
+                    </div>
+                </form>
+
+                <script>
+                    $(document).ready(function () {
+                        // 저장된 이메일 복원
+                        const savedEmail = localStorage.getItem('rememberedEmail');
+                        if (savedEmail) {
+                            $('#email').val(savedEmail);
+                            $('#rememberMe').prop('checked', true);
+                        }
+
+                        $('#loginForm').on('submit', function (e) {
+                            e.preventDefault();
+
+                            const $errorDiv = $('#errorMessage');
+                            const $successDiv = $('#successMessage');
+                            const $submitBtn = $('#submitBtn');
+
+                            // 메시지 초기화
+                            $errorDiv.addClass('hidden');
+                            $successDiv.addClass('hidden');
+
+                            // 버튼 비활성화
+                            $submitBtn.prop('disabled', true).text('로그인 중...');
+
+                            const email = $('#email').val();
+                            const password = $('#password').val();
+
+                            const formData = {
+                                email: email,
+                                password: password
+                            };
+
+                            // 계정 기억하기
+                            if ($('#rememberMe').is(':checked')) {
+                                localStorage.setItem('rememberedEmail', email);
+                            } else {
+                                localStorage.removeItem('rememberedEmail');
+                            }
+
+                            $.ajax({
+                                url: '/api/auth/login',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(formData),
+                                success: function (result) {
+                                    // userRole만 localStorage에 저장 (UI 표시용)
+                                    // 토큰은 서버에서 HttpOnly 쿠키로 설정됨
+                                    localStorage.setItem('userRole', result.data.userRole);
+
+                                    $successDiv.text('로그인 성공! 대시보드로 이동합니다.').removeClass('hidden');
+                                    setTimeout(function () {
+                                        window.location.href = '/dashboard/';
+                                    }, 1000);
+                                },
+                                error: function (xhr) {
+                                    const result = xhr.responseJSON || {};
+                                    $errorDiv.text(result.message || '로그인에 실패했습니다.').removeClass('hidden');
+                                    $submitBtn.prop('disabled', false).text('로그인');
+                                }
+                            });
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 border-t border-gray-800 text-center text-gray-500 text-sm">
+        <div
+            class="max-w-5xl mx-auto flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8">
+            <span class="font-medium">© 2026 CRIC Co. All rights reserved.</span>
+            <div class="flex space-x-4">
+                <a href="mailto:contact@cric.com" class="hover:text-indigo-400 transition-colors">Contact Us</a>
+                <a href="#" class="hover:text-indigo-400 transition-colors">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

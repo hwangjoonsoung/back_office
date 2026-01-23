@@ -35,9 +35,9 @@ public class User extends EditorEntity {
     private String affiliation;
     @Column(length = 100, name = "position")
     private String position;
-    @Column(nullable = false, length = 20, unique = true, name = "phone_name")
+    @Column(length = 20, unique = true, name = "phone_number")
     private String phoneNumber;
-    @Column(nullable = false, name = "birth_day")
+    @Column(name = "birth_day")
     private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
