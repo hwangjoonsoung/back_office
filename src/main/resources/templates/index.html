@@ -13,6 +13,7 @@
     </style>
 </head>
 <script th:src="@{/js/tailwind.js}"></script>
+<script th:src="@{/js/jquery-4.0.0.min.js}"></script>
 
 <body class="h-screen flex flex-col font-sans">
 
@@ -31,32 +32,99 @@
 
             <div class="flex flex-col space-y-6">
                 <h2 class="text-xl font-medium border-l-4 border-indigo-500 pl-3">Sign In</h2>
-                <form th:action="@{/login}" method="post" class="space-y-4">
+                <form id="loginForm" class="space-y-4">
                     <div>
-                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Username</label>
-                        <input type="text" name="username" required
+                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Email</label>
+                        <input type="email" name="email" id="email" required
                             class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
-                            placeholder="아이디를 입력하세요">
+                            placeholder="이메일을 입력하세요">
                     </div>
                     <div>
                         <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Password</label>
-                        <input type="password" name="password" required
+                        <input type="password" name="password" id="password" required
                             class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
                             placeholder="비밀번호를 입력하세요">
                     </div>
-                    <button type="submit"
+                    <div id="errorMessage"
+                        class="hidden text-red-500 text-sm text-center py-2 bg-red-500/10 rounded-lg"></div>
+                    <div id="successMessage"
+                        class="hidden text-green-500 text-sm text-center py-2 bg-green-500/10 rounded-lg"></div>
+                    <button type="submit" id="submitBtn"
                         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition-transform active:scale-95">
                         로그인
                     </button>
                     <div class="flex items-center justify-between text-xs text-gray-400 px-1">
                         <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" class="accent-indigo-500">
+                            <input type="checkbox" id="rememberMe" class="accent-indigo-500">
                             <span>계정 기억하기</span>
                         </label>
                         <a th:href="@{/user/new}" class="hover:text-white transition-colors">회원가입</a>
                         <a href="#" class="hover:text-white transition-colors">비밀번호를 잊으셨나요?</a>
                     </div>
                 </form>
+
+                <script>
+                    $(document).ready(function () {
+                        // 저장된 이메일 복원
+                        const savedEmail = localStorage.getItem('rememberedEmail');
+                        if (savedEmail) {
+                            $('#email').val(savedEmail);
+                            $('#rememberMe').prop('checked', true);
+                        }
+
+                        $('#loginForm').on('submit', function (e) {
+                            e.preventDefault();
+
+                            const $errorDiv = $('#errorMessage');
+                            const $successDiv = $('#successMessage');
+                            const $submitBtn = $('#submitBtn');
+
+                            // 메시지 초기화
+                            $errorDiv.addClass('hidden');
+                            $successDiv.addClass('hidden');
+
+                            // 버튼 비활성화
+                            $submitBtn.prop('disabled', true).text('로그인 중...');
+
+                            const email = $('#email').val();
+                            const password = $('#password').val();
+
+                            const formData = {
+                                email: email,
+                                password: password
+                            };
+
+                            // 계정 기억하기
+                            if ($('#rememberMe').is(':checked')) {
+                                localStorage.setItem('rememberedEmail', email);
+                            } else {
+                                localStorage.removeItem('rememberedEmail');
+                            }
+
+                            $.ajax({
+                                url: '/api/auth/login',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(formData),
+                                success: function (result) {
+                                    // userRole만 localStorage에 저장 (UI 표시용)
+                                    // 토큰은 서버에서 HttpOnly 쿠키로 설정됨
+                                    localStorage.setItem('userRole', result.data.userRole);
+
+                                    $successDiv.text('로그인 성공! 대시보드로 이동합니다.').removeClass('hidden');
+                                    setTimeout(function () {
+                                        window.location.href = '/dashboard/';
+                                    }, 1000);
+                                },
+                                error: function (xhr) {
+                                    const result = xhr.responseJSON || {};
+                                    $errorDiv.text(result.message || '로그인에 실패했습니다.').removeClass('hidden');
+                                    $submitBtn.prop('disabled', false).text('로그인');
+                                }
+                            });
+                        });
+                    });
+                </script>
             </div>
         </div>
     </main>
