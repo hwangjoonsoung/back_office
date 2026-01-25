@@ -18,7 +18,7 @@ public class TokenService {
      * 사용자의 토큰 ID를 Redis에 저장
      * 새로운 토큰 ID가 저장되면 기존 토큰은 자동으로 무효화됨
      */
-    public void saveTokenId(Integer userId, String tokenId, long expirationMs) {
+    public void saveTokenId(Long userId, String tokenId, long expirationMs) {
         String key = TOKEN_KEY_PREFIX + userId;
         redisTemplate.opsForValue().set(key, tokenId, expirationMs, TimeUnit.MILLISECONDS);
     }
@@ -26,7 +26,7 @@ public class TokenService {
     /**
      * 사용자의 현재 유효한 토큰 ID 조회
      */
-    public String getTokenId(Integer userId) {
+    public String getTokenId(Long userId) {
         String key = TOKEN_KEY_PREFIX + userId;
         return redisTemplate.opsForValue().get(key);
     }
@@ -35,7 +35,7 @@ public class TokenService {
      * 토큰 ID 유효성 검증
      * Redis에 저장된 토큰 ID와 일치하는지 확인
      */
-    public boolean validateTokenId(Integer userId, String tokenId) {
+    public boolean validateTokenId(Long userId, String tokenId) {
         String storedTokenId = getTokenId(userId);
         return tokenId != null && tokenId.equals(storedTokenId);
     }

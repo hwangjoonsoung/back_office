@@ -110,7 +110,7 @@ public class UserRestController {
      */
     @PostMapping("/api/user")
     public ResponseEntity<ApiResponse<Integer>> registerUser(@Valid @RequestBody UserRegistDto userRegistDto) {
-        Integer id = userService.saveUser(userRegistDto);
+        Long id = userService.saveUser(userRegistDto);
         ApiResponse<Integer> response = new ApiResponse("ok", HttpStatus.OK.value(), id);
         return ResponseEntity.ok().body(response);
     }
@@ -146,7 +146,7 @@ public class UserRestController {
     @PutMapping("/api/user/{id}/changeStatus")
     public ResponseEntity<ApiResponse<Void>> changeUserStatus(@PathVariable Long id,
             @RequestBody UserStatusDto userStatus) {
-        Integer userId = userService.changeUserStatus(id, userStatus.userStatus());
+        Long userId = userService.changeUserStatus(id, userStatus.userStatus());
         ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

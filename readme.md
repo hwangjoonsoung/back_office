@@ -41,3 +41,6 @@
 ### Frontend
 * **Template Engine**: Thymeleaf
 * **Script**: JavaScript
+
+### database
+![img_1.png](database.png)

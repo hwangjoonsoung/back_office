@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "refresh_tokens")
+@Table(name = "refresh_token")
 public class RefreshToken extends DateEntity {
 
     @Id
@@ -20,7 +20,7 @@ public class RefreshToken extends DateEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private Integer userId;
+    private Long userId;
 
     @Column(nullable = false, unique = true, length = 500)
     private String token;
@@ -29,7 +29,7 @@ public class RefreshToken extends DateEntity {
     private LocalDateTime expiryDate;
 
     @Builder
-    public RefreshToken(Integer userId, String token, LocalDateTime expiryDate) {
+    public RefreshToken(Long userId, String token, LocalDateTime expiryDate) {
         this.userId = userId;
         this.token = token;
         this.expiryDate = expiryDate;

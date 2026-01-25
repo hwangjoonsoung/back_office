@@ -23,12 +23,13 @@ public class File extends EditorEntity{
     @Column(nullable = false, length = 20)
     private Integer size;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, name = "upload_path")
     private String uploadPath;
 
-    @Column(nullable = false, name = "parent_type", length = 20)
-    private String parentType;
+    @Column(nullable = false, length = 5, name = "extension")
+    private char extension;
 
-    @Column(length = 100, nullable = false,name = "parent_id")
-    private Long parentId;
+    @Column(nullable = false, name = "is_deleted")
+    private boolean isDeleted = false;
+
 }

@@ -67,7 +67,7 @@ class DuplicateLoginTest {
 
         // 테스트용 사용자 설정
         testUser = mock(User.class);
-        when(testUser.getId()).thenReturn(1);
+        when(testUser.getId()).thenReturn(1L);
         when(testUser.getEmail()).thenReturn("test@test.com");
         when(testUser.getName()).thenReturn("테스트");
         when(testUser.getPassword()).thenReturn("encodedPassword");
@@ -87,18 +87,18 @@ class DuplicateLoginTest {
         when(userJpaRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.generateTokenId()).thenReturn("token-id-123");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+        when(jwtUtil.generateToken(anyLong(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("access-token");
-        when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
+        when(jwtUtil.generateRefreshToken(anyLong())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
-        when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
+        when(refreshTokenRepository.findByUserId(anyLong())).thenReturn(Optional.empty());
 
         // when
         userService.login(loginRequest);
 
         // then
         verify(jwtUtil).generateTokenId();
-        verify(tokenService).saveTokenId(eq(1), eq("token-id-123"), eq(3600000L));
+        verify(tokenService).saveTokenId(eq(1L), eq("token-id-123"), eq(3600000L));
     }
 
     @Test
@@ -110,11 +110,11 @@ class DuplicateLoginTest {
         when(jwtUtil.generateTokenId())
                 .thenReturn("first-token-id")
                 .thenReturn("second-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+        when(jwtUtil.generateToken(anyLong(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("access-token");
-        when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
+        when(jwtUtil.generateRefreshToken(anyLong())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
-        when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
+        when(refreshTokenRepository.findByUserId(anyLong())).thenReturn(Optional.empty());
 
         // when
         userService.login(loginRequest);
@@ -122,7 +122,7 @@ class DuplicateLoginTest {
 
         // then
         ArgumentCaptor<String> tokenIdCaptor = ArgumentCaptor.forClass(String.class);
-        verify(tokenService, times(2)).saveTokenId(eq(1), tokenIdCaptor.capture(), anyLong());
+        verify(tokenService, times(2)).saveTokenId(eq(1L), tokenIdCaptor.capture(), anyLong());
 
         assertThat(tokenIdCaptor.getAllValues()).containsExactly("first-token-id", "second-token-id");
         assertThat(tokenIdCaptor.getAllValues().get(0)).isNotEqualTo(tokenIdCaptor.getAllValues().get(1));
@@ -137,11 +137,11 @@ class DuplicateLoginTest {
         when(jwtUtil.generateTokenId())
                 .thenReturn("first-token-id")
                 .thenReturn("second-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+        when(jwtUtil.generateToken(anyLong(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("access-token");
-        when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
+        when(jwtUtil.generateRefreshToken(anyLong())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
-        when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
+        when(refreshTokenRepository.findByUserId(anyLong())).thenReturn(Optional.empty());
 
         // when
         userService.login(loginRequest); // 첫 번째 로그인
@@ -149,7 +149,7 @@ class DuplicateLoginTest {
 
         // then
         ArgumentCaptor<String> tokenIdCaptor = ArgumentCaptor.forClass(String.class);
-        verify(tokenService, times(2)).saveTokenId(eq(1), tokenIdCaptor.capture(), anyLong());
+        verify(tokenService, times(2)).saveTokenId(eq(1L), tokenIdCaptor.capture(), anyLong());
 
         String lastSavedTokenId = tokenIdCaptor.getAllValues().get(1);
         assertThat(lastSavedTokenId).isEqualTo("second-token-id");
@@ -162,18 +162,18 @@ class DuplicateLoginTest {
         when(userJpaRepository.findByEmail(anyString())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.generateTokenId()).thenReturn("unique-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), anyString(), anyString()))
+        when(jwtUtil.generateToken(anyLong(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("access-token");
-        when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
+        when(jwtUtil.generateRefreshToken(anyLong())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
-        when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
+        when(refreshTokenRepository.findByUserId(anyLong())).thenReturn(Optional.empty());
 
         // when
         userService.login(loginRequest);
 
         // then
         verify(jwtUtil).generateToken(
-                eq(1),
+                eq(1L),
                 eq("test@test.com"),
                 eq("테스트"),
                 eq("unique-token-id"), // tokenId가 포함되어 호출되는지 확인
@@ -204,13 +204,13 @@ class DuplicateLoginTest {
         when(jwtUtil.generateTokenId())
                 .thenReturn("first-token-id")
                 .thenReturn("second-token-id");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), eq("first-token-id"), anyString()))
+        when(jwtUtil.generateToken(anyLong(), anyString(), anyString(), eq("first-token-id"), anyString()))
                 .thenReturn("access-token-1");
-        when(jwtUtil.generateToken(anyInt(), anyString(), anyString(), eq("second-token-id"), anyString()))
+        when(jwtUtil.generateToken(anyLong(), anyString(), anyString(), eq("second-token-id"), anyString()))
                 .thenReturn("access-token-2");
-        when(jwtUtil.generateRefreshToken(anyInt())).thenReturn("refresh-token");
+        when(jwtUtil.generateRefreshToken(anyLong())).thenReturn("refresh-token");
         when(jwtUtil.getAccessTokenExpiration()).thenReturn(3600000L);
-        when(refreshTokenRepository.findByUserId(anyInt())).thenReturn(Optional.empty());
+        when(refreshTokenRepository.findByUserId(anyLong())).thenReturn(Optional.empty());
 
         // when
         LoginResponseDto firstLogin = userService.login(loginRequest);

@@ -33,7 +33,7 @@ public class UserService {
     private final TokenService tokenService;
 
     @Transactional
-    public Integer saveUser(UserRegistDto userRegistDto) {
+    public Long saveUser(UserRegistDto userRegistDto) {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userRegistDto.getPassword());
         userRegistDto.setPassword(encodedPassword);
@@ -125,7 +125,7 @@ public class UserService {
         }
 
         // 사용자 정보 조회
-        Integer userId = jwtUtil.getUserIdFromToken(refreshToken);
+        Long userId = jwtUtil.getUserIdFromToken(refreshToken);
         User user = userJpaRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다"));
 
@@ -157,7 +157,7 @@ public class UserService {
         refreshTokenRepository.deleteByUserId(userId);
     }
 
-    private void saveOrUpdateRefreshToken(Integer userId, String refreshToken) {
+    private void saveOrUpdateRefreshToken(Long userId, String refreshToken) {
         LocalDateTime expiryDate = LocalDateTime.now()
                 .plusSeconds(jwtUtil.getRefreshExpiration() / 1000);
 
@@ -178,7 +178,7 @@ public class UserService {
     }
 
     @Transactional
-    public Integer changeUserStatus(Long id, String userStatus) {
+    public Long changeUserStatus(Long id, String userStatus) {
         User user = userJpaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
         user.setUserStatus(UserStatus.valueOf(userStatus));

@@ -30,7 +30,7 @@ public class JwtUtil {
     /**
      * Access Token 생성 (tokenId, role 포함)
      */
-    public String generateToken(Integer userId, String email, String name, String tokenId, String role) {
+    public String generateToken(Long userId, String email, String name, String tokenId, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
@@ -64,7 +64,7 @@ public class JwtUtil {
     /**
      * Refresh Token 생성
      */
-    public String generateRefreshToken(Integer userId) {
+    public String generateRefreshToken(Long userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + refreshExpiration);
 
@@ -97,9 +97,9 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public Integer getUserIdFromToken(String token) {
+    public Long getUserIdFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
-        return Integer.parseInt(claims.getSubject());
+        return Long.parseLong(claims.getSubject());
     }
 
     public String getEmailFromToken(String token) {

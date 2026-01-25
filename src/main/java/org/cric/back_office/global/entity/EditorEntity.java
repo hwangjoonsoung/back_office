@@ -21,11 +21,11 @@ import java.time.LocalDateTime;
 public class EditorEntity extends DateEntity{
 
     @CreatedBy
-    @Column(updatable = false, name = "create_by")
+    @Column(updatable = false, name = "create_by",length = 20)
     private String createBy;
 
     @LastModifiedBy
-    @Column(name = "update_by")
+    @Column(name = "update_by", length = 20)
     private String updateBy;
 
     // 회원가입 시 직접 설정할 수 있도록 setter 제공

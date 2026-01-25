@@ -23,7 +23,7 @@ public class User extends EditorEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false, length = 100, name = "email")
     private String email;

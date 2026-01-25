@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println(token);
         if (token != null) {
             if (jwtUtil.validateToken(token)) {
-                Integer userId = jwtUtil.getUserIdFromToken(token);
+                Long userId = jwtUtil.getUserIdFromToken(token);
                 String tokenId = jwtUtil.getTokenIdFromToken(token);
 
                 // Redis에서 토큰 ID 유효성 검증 (중복 로그인 방지)

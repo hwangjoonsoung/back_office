@@ -81,7 +81,7 @@ class UserRestControllerTest {
     @DisplayName("POST /api/users - 회원가입 성공 시 200 OK를 반환한다")
     void registerUser_Success_Returns200Ok() throws Exception {
         // given
-        Integer savedUserId = 1;
+        Long savedUserId = 1L;
         when(userService.saveUser(any(UserRegistDto.class))).thenReturn(savedUserId);
 
         // when

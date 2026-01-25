@@ -37,7 +37,7 @@ class TokenServiceTest {
     @DisplayName("saveTokenId - Redis에 토큰 ID가 저장된다")
     void saveTokenId_SavesTokenIdToRedis() {
         // given
-        Integer userId = 1;
+        Long userId = 1L;
         String tokenId = "test-token-id";
         long expirationMs = 3600000L;
 
@@ -59,7 +59,7 @@ class TokenServiceTest {
     @DisplayName("getTokenId - Redis에서 토큰 ID를 조회한다")
     void getTokenId_RetrievesTokenIdFromRedis() {
         // given
-        Integer userId = 1;
+        Long userId = 1L;
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get("user:token:1")).thenReturn("stored-token-id");
 
@@ -74,7 +74,7 @@ class TokenServiceTest {
     @DisplayName("validateTokenId - 저장된 토큰 ID와 일치하면 true를 반환한다")
     void validateTokenId_ReturnsTrueWhenMatches() {
         // given
-        Integer userId = 1;
+        Long userId = 1L;
         String tokenId = "valid-token-id";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -91,7 +91,7 @@ class TokenServiceTest {
     @DisplayName("validateTokenId - 저장된 토큰 ID와 불일치하면 false를 반환한다 (중복 로그인으로 무효화된 경우)")
     void validateTokenId_ReturnsFalseWhenNotMatches() {
         // given
-        Integer userId = 1;
+        Long userId = 1L;
         String oldTokenId = "old-token-id";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -108,7 +108,7 @@ class TokenServiceTest {
     @DisplayName("validateTokenId - Redis에 토큰이 없으면 false를 반환한다 (로그아웃된 경우)")
     void validateTokenId_ReturnsFalseWhenNoTokenInRedis() {
         // given
-        Integer userId = 1;
+        Long userId = 1L;
         String tokenId = "some-token-id";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -125,7 +125,7 @@ class TokenServiceTest {
     @DisplayName("validateTokenId - 요청 토큰 ID가 null이면 false를 반환한다")
     void validateTokenId_ReturnsFalseWhenTokenIdIsNull() {
         // given
-        Integer userId = 1;
+        Long userId = 1L;
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get("user:token:1")).thenReturn("stored-token-id");
@@ -154,7 +154,7 @@ class TokenServiceTest {
     @DisplayName("중복 로그인 시나리오 - 두 번째 로그인 후 첫 번째 토큰은 검증 실패한다")
     void duplicateLoginScenario_FirstTokenBecomesInvalidAfterSecondLogin() {
         // given
-        Integer userId = 1;
+        Long userId = 1L;
         String firstTokenId = "first-token-id";
         String secondTokenId = "second-token-id";
 
