@@ -28,6 +28,10 @@ public class RefreshToken extends DateEntity {
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Builder
     public RefreshToken(Long userId, String token, LocalDateTime expiryDate) {
         this.userId = userId;

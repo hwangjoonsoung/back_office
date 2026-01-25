@@ -2,6 +2,7 @@ package org.cric.back_office.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.cric.back_office.global.dto.ApiResponse;
 import org.cric.back_office.global.entity.EditorEntity;
 import org.cric.back_office.user.dto.UserEditDto;
 import org.cric.back_office.user.dto.UserRegistDto;
@@ -9,6 +10,8 @@ import org.cric.back_office.user.enums.UserRole;
 import org.cric.back_office.user.enums.UserStatus;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -42,11 +45,14 @@ public class User extends EditorEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "user_status", length = 10)
-    private UserStatus userStatus =UserStatus.APPROVED;
+    private UserStatus userStatus = UserStatus.APPROVED;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "user_roll", length = 10)
     private UserRole userRole = UserRole.GENERAL;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<RefreshToken> refreshTokens = new ArrayList();
 
     public User settingRegistUser(UserRegistDto userRegistDto) {
         this.email = userRegistDto.getEmail();
