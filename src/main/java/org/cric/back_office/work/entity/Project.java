@@ -1,10 +1,11 @@
-package org.cric.back_office.user.entity;
+package org.cric.back_office.work.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.cric.back_office.global.entity.EditorEntity;
+import org.cric.back_office.user.entity.UserProjectRoll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,4 +58,10 @@ public class Project extends EditorEntity {
     // 연관관계: UserProjectRoll
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<UserProjectRoll> userProjectRolls = new ArrayList<>();
+
+    // 연관관계 편의메서드(Project - Silo)
+    public void changeSilo(Silo silo) {
+        this.silo = silo;
+        silo.getProjects().add(this);
+    }
 }

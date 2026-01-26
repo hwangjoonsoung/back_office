@@ -162,6 +162,7 @@ public class UserService {
                 .plusSeconds(jwtUtil.getRefreshExpiration() / 1000);
 
         Optional<RefreshToken> existingToken = refreshTokenRepository.findByUserId(userId);
+        User user = userJpaRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found with id:" + userId));
 
         if (existingToken.isPresent()) {
             // 기존 토큰 업데이트
@@ -169,7 +170,7 @@ public class UserService {
         } else {
             // 새 토큰 생성
             RefreshToken newToken = RefreshToken.builder()
-                    .userId(userId)
+                    .user(user)
                     .token(refreshToken)
                     .expiryDate(expiryDate)
                     .build();

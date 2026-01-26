@@ -1,10 +1,10 @@
-package org.cric.back_office.user.entity;
+package org.cric.back_office.global.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.cric.back_office.global.entity.EditorEntity;
+import org.cric.back_office.work.entity.TaskFile;
 
 import java.util.ArrayList;
 import java.util.List;

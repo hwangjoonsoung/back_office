@@ -35,4 +35,10 @@ public class MailHistory {
 
     @Column(name = "is_success", nullable = false)
     private Boolean isSuccess;
+
+    //연관관계 편의 메서드
+    public void changeUser(User user) {
+        this.user = user;
+        user.getMailHistories().add(this);
+    }
 }

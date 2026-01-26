@@ -19,9 +19,6 @@ public class RefreshToken extends DateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private Long userId;
-
     @Column(nullable = false, unique = true, length = 500)
     private String token;
 
@@ -33,8 +30,8 @@ public class RefreshToken extends DateEntity {
     private User user;
 
     @Builder
-    public RefreshToken(Long userId, String token, LocalDateTime expiryDate) {
-        this.userId = userId;
+    public RefreshToken(User user, String token, LocalDateTime expiryDate) {
+        this.user = user;
         this.token = token;
         this.expiryDate = expiryDate;
     }
@@ -46,5 +43,11 @@ public class RefreshToken extends DateEntity {
 
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(this.expiryDate);
+    }
+
+    //연관관계 편의 메서드 (refresh_token - user)
+    public void changeUser(User user) {
+        this.user = user;
+        user.getRefreshTokens().add(this);
     }
 }

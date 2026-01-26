@@ -1,4 +1,4 @@
-package org.cric.back_office.user.entity;
+package org.cric.back_office.work.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,7 +39,19 @@ public class Task extends EditorEntity {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
-    // 연관관계: TaskFile
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
     private List<TaskFile> taskFiles = new ArrayList<>();
+
+    //연관관계 편의 메서드
+    public void changeProject(Project project) {
+        this.project = project;
+        project.getTasks().add(this);
+    }
+
+    public void changeSilo(Silo silo) {
+        this.silo = silo;
+        silo.getTasks().add(this);
+    }
+
+
 }
