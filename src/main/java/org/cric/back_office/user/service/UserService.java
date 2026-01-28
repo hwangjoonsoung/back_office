@@ -1,5 +1,6 @@
 package org.cric.back_office.user.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 import org.cric.back_office.global.service.TokenService;
@@ -7,10 +8,16 @@ import org.cric.back_office.global.util.JwtUtil;
 import org.cric.back_office.user.dto.*;
 import org.cric.back_office.user.entity.RefreshToken;
 import org.cric.back_office.user.entity.User;
+import org.cric.back_office.user.entity.UserSilo;
 import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.repository.RefreshTokenRepository;
 import org.cric.back_office.user.repository.UserJpaRepository;
 import org.cric.back_office.user.repository.UserRepository;
+import org.cric.back_office.work.entity.Silo;
+import org.cric.back_office.work.repository.SiloJpaRepository;
+import org.cric.back_office.work.repository.SiloRepository;
+import org.slf4j.ILoggerFactory;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +38,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final SiloJpaRepository siloJpaRepository;
 
     @Transactional
     public Long saveUser(UserRegistDto userRegistDto) {
@@ -162,7 +170,8 @@ public class UserService {
                 .plusSeconds(jwtUtil.getRefreshExpiration() / 1000);
 
         Optional<RefreshToken> existingToken = refreshTokenRepository.findByUserId(userId);
-        User user = userJpaRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found with id:" + userId));
+        User user = userJpaRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id:" + userId));
 
         if (existingToken.isPresent()) {
             // 기존 토큰 업데이트
@@ -184,5 +193,51 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
         user.setUserStatus(UserStatus.valueOf(userStatus));
         return user.getId();
+    }
+
+    @Transactional
+    public void userAcceptSilo(Long userId, Long siloId) {
+        User user = userJpaRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        Silo silo = siloJpaRepository.findById(siloId)
+                .orElseThrow(() -> new IllegalArgumentException("Silo not found with id: " + siloId));
+
+        UserSilo userSilo = new UserSilo(user, silo);
+        userRepository.acceptUserToSilo(userSilo);
+    }
+
+    public void checkUserStatusByEmail(String userEmail) {
+        User user = userJpaRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("user not found with user email: " + userEmail));
+        UserStatus userStatus = user.getUserStatus();
+        // ai todo: 여기서 가입된 회원인지, 해당 회원이 유효한지 확인
+    }
+
+    /**
+     * 초대를 위한 사용자 검증
+     * 
+     * @param email 검증할 사용자 이메일
+     * @return 유효한 사용자면 User 엔티티 반환, 그렇지 않으면 null
+     */
+    public User validateUserForInvitation(String email) {
+        User user = userJpaRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return null; // 사용자 없음
+        }
+
+        if (user.getUserStatus() != UserStatus.APPROVED) {
+            return null; // 승인되지 않은 사용자
+        }
+
+        return user;
+    }
+
+    /**
+     * ID로 User 엔티티 조회 (내부 사용)
+     */
+    public User getUserEntityById(Long userId) {
+        return userJpaRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
     }
 }

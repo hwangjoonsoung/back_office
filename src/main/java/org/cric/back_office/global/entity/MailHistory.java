@@ -1,9 +1,10 @@
-package org.cric.back_office.user.entity;
+package org.cric.back_office.global.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.cric.back_office.user.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +36,9 @@ public class MailHistory {
 
     @Column(name = "is_success", nullable = false)
     private Boolean isSuccess;
+
+    @OneToOne(mappedBy = "mailHistoryId",fetch = FetchType.LAZY)
+    private SiloInviteHistory siloInviteHistory;
 
     //연관관계 편의 메서드
     public void changeUser(User user) {

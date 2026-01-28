@@ -2,8 +2,8 @@ package org.cric.back_office.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.cric.back_office.global.dto.ApiResponse;
 import org.cric.back_office.global.entity.EditorEntity;
+import org.cric.back_office.global.entity.MailHistory;
 import org.cric.back_office.user.dto.UserEditDto;
 import org.cric.back_office.user.dto.UserRegistDto;
 import org.cric.back_office.user.enums.UserRole;

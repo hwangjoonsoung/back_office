@@ -6,9 +6,11 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.user.dto.FindUserCondition;
 import org.cric.back_office.user.entity.User;
+import org.cric.back_office.user.entity.UserSilo;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import javax.swing.plaf.ProgressBarUI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +35,10 @@ public class UserRepository {
         ).fetch();
     }
 
+    public void acceptUserToSilo(UserSilo userSilo) {
+        em.persist(userSilo);
+    }
+
     private BooleanExpression conditionUserName(String name) {
         return StringUtils.hasText(name) ? user.name.like("%" + name + "%") : null;
     }
@@ -51,5 +57,4 @@ public class UserRepository {
     private BooleanExpression conditionUserBirth(LocalDate localDate) {
         return localDate != null ? user.birthday.eq(localDate) : null;
     }
-
 }

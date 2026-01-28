@@ -2,6 +2,7 @@ package org.cric.back_office.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.cric.back_office.work.entity.Silo;
@@ -10,6 +11,7 @@ import org.cric.back_office.work.entity.Silo;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_silo")
+@AllArgsConstructor
 public class UserSilo{
 
     @Id
@@ -28,6 +30,11 @@ public class UserSilo{
 
     @Column(name = "invitable")
     private boolean invitable = false;
+
+    public UserSilo(User user, Silo silo) {
+        this.user = user;
+        this.silo = silo;
+    }
 
     // 연관관계 편의메서드
     public void changeUser(User user) {

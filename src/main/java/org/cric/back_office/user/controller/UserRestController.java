@@ -11,6 +11,7 @@ import org.cric.back_office.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.util.List;
 
@@ -145,7 +146,7 @@ public class UserRestController {
      */
     @PutMapping("/api/user/{id}/changeStatus")
     public ResponseEntity<ApiResponse<Void>> changeUserStatus(@PathVariable Long id,
-            @RequestBody UserStatusDto userStatus) {
+                                                              @RequestBody UserStatusDto userStatus) {
         Long userId = userService.changeUserStatus(id, userStatus.userStatus());
         ApiResponse<Void> response = new ApiResponse("ok", HttpStatus.OK.value(), userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -175,4 +176,21 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * 초대받은 링크를 클릭하면 silo 입장 권한 획득
+     * Post /api/user/{id}/silo/{id}/accept
+     **/
+    @PostMapping("/api/user/{userId}/silo/{siloId}/accept")
+    public ResponseEntity<Void> userAcceptSilo(@PathVariable("userId") Long userId,@PathVariable("siloId")Long siloId) {
+        userService.userAcceptSilo(userId, siloId);
+    }
+
+    /**
+     * 이메일로 정상적으로 이용 가능한 회원인지 확인
+     * Get /api/user/{email}/userStatus
+     **/
+    @GetMapping("/api/user/{userEmail}/userStatus")
+    public ResponseEntity<Void> checkUserStatusByEmail(@PathVariable("userEmail") String userEmail) {
+        userService.checkUserStatusByEmail(userEmail);
+    }
 }

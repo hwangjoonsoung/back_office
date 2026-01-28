@@ -1,14 +1,14 @@
 
 CREATE TABLE `task_file`
 (
-    `id`      Bigint NOT NULL,
+    `id`      Bigint NOT NULL primary key auto_increment,
     `task_id` Bigint NOT NULL,
     `file_id` Bigint NOT NULL
 );
 
 CREATE TABLE `task`
 (
-    `id`             Bigint NOT NULL,
+    `id`             Bigint NOT NULL primary key auto_increment,
     `silo_id`        Bigint NOT NULL,
     `project_id`     Bigint NOT NULL,
     `title`          varchar(500) NULL,
@@ -23,7 +23,7 @@ CREATE TABLE `task`
 
 CREATE TABLE `user_project_roll`
 (
-    `id`             Bigint NOT NULL,
+    `id`             Bigint NOT NULL primary key auto_increment,
     `user_id`        Bigint NOT NULL,
     `project_id`     Bigint NOT NULL,
     `role`           varchar(20) NULL,
@@ -35,7 +35,7 @@ CREATE TABLE `user_project_roll`
 
 CREATE TABLE `user`
 (
-    `id`             Bigint NOT NULL,
+    `id`             Bigint NOT NULL primary key auto_increment,
     `email`          varchar(100) NULL,
     `password`       varchar(100) NULL,
     `name`           varchar(100) NULL,
@@ -53,9 +53,9 @@ CREATE TABLE `user`
 
 CREATE TABLE `silo`
 (
-    `id`             Bigint NOT NULL,
+    `id`             Bigint NOT NULL primary key auto_increment,
     `name`           varchar(100) NULL,
-    `enable`         boolean NULL,
+    `is_deleted`         boolean NULL,
     `date_of_create` datetime NULL,
     `date_of_update` datetime NULL,
     `create_by`      varchar(20) NULL,
@@ -64,7 +64,7 @@ CREATE TABLE `silo`
 
 CREATE TABLE `project`
 (
-    `id`                 Bigint NOT NULL,
+    `id`                 Bigint NOT NULL primary key auto_increment,
     `silo_id`            Bigint NOT NULL,
     `name`               varchar(500) NULL,
     `is_publish`         boolean NULL,
@@ -83,7 +83,7 @@ CREATE TABLE `project`
 
 CREATE TABLE `refresh_token`
 (
-    `id`            Bigint NOT NULL,
+    `id`            Bigint NOT NULL primary key auto_increment,
     `user_id`        Bigint NOT NULL,
     `token`          varchar(500) NULL,
     `expiry_date`    datetime NULL,
@@ -93,7 +93,7 @@ CREATE TABLE `refresh_token`
 
 CREATE TABLE `mail_history`
 (
-    `id`           Bigint NOT NULL,
+    `id`           Bigint NOT NULL primary key auto_increment,
     `user_id`      Bigint NOT NULL,
     `sender`       varchar(100) NULL,
     `receiver`     varchar(100) NULL,
@@ -104,7 +104,7 @@ CREATE TABLE `mail_history`
 
 CREATE TABLE `file`
 (
-    `id`                 Bigint NOT NULL,
+    `id`                 Bigint NOT NULL primary key auto_increment,
     `original_file_name` varchar(100) NULL,
     `stored_file_name`   varchar(100) NULL,
     `size`               int(20)	NULL,
@@ -119,11 +119,29 @@ CREATE TABLE `file`
 
 CREATE TABLE `user_silo`
 (
-    `id`      bigint NOT NULL,
+    `id`      bigint NOT NULL primary key auto_increment,
     `silo_id` Bigint NOT NULL,
     `user_id` Bigint NOT NULL,
     `invitable` boolean NOT NULL
 );
+
+
+CREATE TABLE `silo_invite_history`
+(
+    `id`      bigint NOT NULL primary key auto_increment,
+    user_id bigint null,
+    silo_id bigint not null ,
+    mail_history_id bigint not null ,
+    email varchar(100) not null ,
+    invite_code varchar(20) null,
+    date_of_expired datetime
+);
+
+alter table silo_invite_history
+    Add constraint FK_silo_invite_history_user foreign key (user_id) references user (id),
+    Add constraint FK_silo_invite_history_silo foreign key (silo_id) references silo (id),
+    Add constraint FK_silo_invite_history_mail_history foreign key (mail_history_id) references mail_history (id);
+
 
 -- 1. task 테이블 연관관계 (silo, project 참조)
 ALTER TABLE task
@@ -132,7 +150,6 @@ ALTER TABLE task
 
 -- 2. user_project_roll 테이블 연관관계 (silo, user, project 참조)
 ALTER TABLE user_project_roll
-    ADD CONSTRAINT FK_upr_silo FOREIGN KEY (silo_id) REFERENCES silo (id),
     ADD CONSTRAINT FK_upr_user FOREIGN KEY (user_id) REFERENCES user(id),
     ADD CONSTRAINT FK_upr_project FOREIGN KEY (project_id) REFERENCES project(id);
 
@@ -152,3 +169,7 @@ ALTER TABLE mail_history
 ALTER TABLE task_file
     ADD CONSTRAINT FK_tf_task FOREIGN KEY (task_id) REFERENCES task (id),
     ADD CONSTRAINT FK_tf_file FOREIGN KEY (file_id) REFERENCES file(id);
+-- 7. user_silo 테이블 연관관계 (user, silo 참조)
+alter table user_silo
+    add constraint FK_user_silo_user foreign key (user_id) references user(id),
+    add constraint FK_user_silo_silo foreign key (silo_id) references silo(id)

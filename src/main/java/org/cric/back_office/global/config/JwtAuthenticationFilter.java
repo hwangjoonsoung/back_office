@@ -29,11 +29,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/js/") ||
+                path.startsWith("/css/") ||
+                path.startsWith("/images/") ||
+                path.equals("/favicon.ico") ||
+                path.equals("/") ||
+                path.equals("/user/new") ||
+                path.equals("/api/auth/login") ||
+                path.equals("/api/user") ||
+                path.equals("/example/error.html");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         String token = extractToken(request);
-        System.out.println(token);
         if (token != null) {
             if (jwtUtil.validateToken(token)) {
                 Long userId = jwtUtil.getUserIdFromToken(token);

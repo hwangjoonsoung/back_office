@@ -17,36 +17,38 @@ import java.beans.Encoder;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-            CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
-    }
+        public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                        CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+                this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(customAuthenticationEntryPoint))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/js/**", "/css/**", "/images/**", "/api/auth/login", "/api/user", "/",
-                                "/user/new", "/example/error.html")
-                        .permitAll()
-                        // GOD 권한만 접근 가능한 API
-                        .requestMatchers("/admin/**").hasRole("GOD")
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(csrf -> csrf.disable())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(exception -> exception
+                                                .authenticationEntryPoint(customAuthenticationEntryPoint))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/js/**", "/css/**", "/images/**", "/api/auth/login",
+                                                                "/api/user", "/", "/test/**",
+                                                                "/user/new", "/example/error.html")
+                                                .permitAll()
+                                                // GOD 권한만 접근 가능한 API
+                                                .requestMatchers("/admin/**").hasRole("GOD")
+                                                .anyRequest().authenticated())
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }
