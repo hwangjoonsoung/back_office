@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Silo 초대</title>
+</head>
+
+<body>
+    <h2 th:text="${siloName} + '에 초대합니다!'"></h2>
+    <p th:text="${inviterName} + '님이 당신을 초대했습니다.'"></p>
+    <div style="padding: 20px; background-color: #f8f9fa;">
+        <a th:href="${inviteUrl}" style="padding: 10px 20px; background-color: blue; color: white; text-decoration: none;">초대 수락하기</a>
+    </div>
+</body>
+
+</html>
