@@ -25,6 +25,9 @@ public class Silo extends EditorEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(nullable = false, columnDefinition = "text")
+    private String description;
+
     @Column(nullable = false, name = "is_deleted")
     private Boolean isDeleted = false;
 
