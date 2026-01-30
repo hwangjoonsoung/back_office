@@ -1,10 +1,266 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Modern Silo Dashboard</title>
+    <link th:href="@{/css/inter-font.css}" rel="stylesheet" />
+    <link th:href="@{/css/material-symbols.css}" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Neon blue/bright blue as primary accent
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#111827", // Deep charcoal/almost black
+                        "card-light": "#ffffff",
+                        "card-dark": "#1f2937", // Slightly lighter charcoal for cards
+                        "text-light": "#1f2937",
+                        "text-dark": "#e5e7eb",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#374151",
+                        "header-dark": "#0f172a", // Very dark slate for the new header
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px -3px rgba(59, 130, 246, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        .header-dropdown-content {
+            @apply invisible opacity-0 translate-y-2 transition-all duration-200 ease-in-out absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1e293b] border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl py-2 z-50;
+        }
+
+        .header-dropdown-trigger:hover .header-dropdown-content {
+            @apply visible opacity-100 translate-y-0;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-body text-text-light dark:text-text-dark min-h-screen flex flex-col transition-colors duration-300">
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main class="flex-grow container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
+            <section class="flex flex-col h-full gap-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-lg">layers</span>
+                        Silos
+                    </h2>
+                    <button
+                        class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-lg hover:shadow-blue-500/30">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                        Create Silo
+                    </button>
+                </div>
+                <div
+                    class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-sm flex-grow">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-primary">inventory_2</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Alpha Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">12 items</p>
+                        </div>
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-purple-500">science</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Beta Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">8 items</p>
+                        </div>
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-green-500">grass</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Gamma Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">24 items</p>
+                        </div>
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-orange-500">warning</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Delta Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">Pending</p>
+                        </div>
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-pink-500">favorite</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Epsilon Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">45 items</p>
+                        </div>
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-indigo-500">cloud</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Zeta Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">Syncing...</p>
+                        </div>
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-teal-500">water_drop</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Eta Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">Stable</p>
+                        </div>
+                        <div
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-red-500">local_fire_department</span>
+                            </div>
+                            <h3 class="font-medium text-sm">Theta Silo</h3>
+                            <p class="text-xs text-gray-500 mt-1">Alert</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="flex flex-col h-full gap-4">
+                <div class="flex justify-between items-center h-[36px]">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-lg">history</span>
+                        Recent History
+                    </h2>
+                    <a class="text-sm text-primary hover:text-blue-400 font-medium" href="#">View All</a>
+                </div>
+                <div
+                    class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-sm flex-grow">
+                    <div class="space-y-3">
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-primary text-sm">update</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Alpha Silo Updated</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Inventory levels adjusted manually.
+                                </p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">2m ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-green-500 text-sm">add_task</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Gamma Silo Created</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">New silo initialized successfully.
+                                </p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">1h ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-red-500 text-sm">error_outline</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Connection Lost</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Theta Silo went offline briefly.</p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">3h ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-purple-500 text-sm">person</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">User Login</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Admin accessed the dashboard.</p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">5h ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-indigo-500 text-sm">sync</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Data Sync</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Automatic nightly sync completed.
+                                </p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">Yesterday</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-orange-500 text-sm">settings</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Config Update</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Global settings modified.</p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">Yesterday</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script>
+        // Check for saved user preference, if any, on load of the website
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+    <button
+        class="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors z-50"
+        onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <span class="material-symbols-outlined">dark_mode</span>
+    </button>
 </body>
+
 </html>

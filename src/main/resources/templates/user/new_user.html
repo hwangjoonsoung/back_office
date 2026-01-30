@@ -1,130 +1,263 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Back Office - 회원가입</title>
-    <style>
-        body {
-            background-color: #121212;
-            color: #ffffff;
-        }
-    </style>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>회원 가입 - Member Registration</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Blue-500 for primary actions
+                        "primary-dark": "#2563eb", // Blue-600 for hover
+                        "background-light": "#f3f4f6", // Gray-100
+                        "background-dark": "#111827", // Gray-900
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1f2937", // Gray-800
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#374151",
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<script th:src="@{/js/tailwind.js}"></script>
-<script th:src="@{/js/jquery-4.0.0.min.js}"></script>
 
-<body class="h-screen flex flex-col font-sans">
-
-    <main class="flex-grow flex items-center justify-center px-4">
-        <div
-            class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-gray-700 rounded-xl p-8 bg-[#1e1e1e] shadow-2xl">
-
-            <div class="flex flex-col items-center justify-center space-y-4 border-r border-gray-700 md:pr-8">
+<body
+    class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col items-center justify-center p-4 antialiased transition-colors duration-200">
+    <div
+        class="w-full max-w-5xl bg-surface-light dark:bg-surface-dark shadow-2xl rounded-xl overflow-hidden border border-border-light dark:border-border-dark flex flex-col">
+        <div class="flex flex-col md:flex-row flex-grow">
+            <div
+                class="w-full md:w-1/2 bg-gray-50 dark:bg-gray-900/50 p-12 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-border-light dark:border-border-dark relative overflow-hidden group">
                 <div
-                    class="w-32 h-32 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <span class="text-4xl font-bold italic">LOGO</span>
+                    class="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary to-transparent">
                 </div>
-                <h1 class="text-2xl font-semibold tracking-tight">CRIC Admin</h1>
-                <p class="text-gray-400 text-sm text-center">서비스의 효율적인 관리를 위한 <br />백오피스 시스템입니다.</p>
+                <div class="z-10 text-center transform transition-transform duration-500 group-hover:scale-105">
+                    <div
+                        class="w-32 h-32 bg-primary/10 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 ring-1 ring-primary/20 backdrop-blur-sm">
+                        <span class="material-icons text-6xl text-primary">business</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">LOGO</h2>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm max-w-xs mx-auto leading-relaxed">
+                        Welcome to our platform. Join us today to experience premium corporate services tailored for
+                        your business needs.
+                    </p>
+                </div>
             </div>
-
-            <div class="flex flex-col space-y-6">
-                <h2 class="text-xl font-medium border-l-4 border-indigo-500 pl-3">Sign Up</h2>
-                <form id="registerForm" class="space-y-4">
+            <div class="w-full md:w-1/2 p-8 md:p-12 bg-surface-light dark:bg-surface-dark">
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <span class="material-icons text-primary text-sm">edit_note</span>
+                        회원 정보 입력
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">필수 정보를 입력해주세요.</p>
+                </div>
+                <form action="#" class="space-y-5" method="POST">
                     <div>
-                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Email <span
-                                class="text-red-500">*</span></label>
-                        <input type="email" name="email" id="email" required maxlength="100"
-                            class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
-                            placeholder="이메일을 입력하세요">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="name">이름
+                            (Name)</label>
+                        <div class="relative rounded-md shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span class="material-icons text-gray-400 text-lg">person</span>
+                            </div>
+                            <input
+                                class="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-10 py-2.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary focus:ring-primary sm:text-sm transition-colors"
+                                id="name" name="name" placeholder="홍길동" type="text" />
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Password <span
-                                class="text-red-500">*</span></label>
-                        <input type="password" name="password" id="password" required maxlength="100"
-                            class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
-                            placeholder="비밀번호를 입력하세요">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="email">이메일
+                            (Email)</label>
+                        <div class="relative rounded-md shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span class="material-icons text-gray-400 text-lg">email</span>
+                            </div>
+                            <input
+                                class="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-10 py-2.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary focus:ring-primary sm:text-sm transition-colors"
+                                id="email" name="email" placeholder="example@company.com" type="email" />
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Name <span
-                                class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" required maxlength="100"
-                            class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
-                            placeholder="이름을 입력하세요">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            for="password">비밀번호 (Password)</label>
+                        <div class="relative rounded-md shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span class="material-icons text-gray-400 text-lg">lock</span>
+                            </div>
+                            <input
+                                class="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-10 py-2.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary focus:ring-primary sm:text-sm transition-colors"
+                                id="password" name="password" placeholder="••••••••" type="password" />
+                        </div>
                     </div>
-                    <div id="errorMessage"
-                        class="hidden text-red-500 text-sm text-center py-2 bg-red-500/10 rounded-lg"></div>
-                    <div id="successMessage"
-                        class="hidden text-green-500 text-sm text-center py-2 bg-green-500/10 rounded-lg"></div>
-                    <button type="submit" id="submitBtn"
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition-transform active:scale-95">
-                        회원가입
-                    </button>
-                    <div class="flex items-center justify-center text-xs text-gray-400 px-1">
-                        <span>이미 계정이 있으신가요?</span>
-                        <a th:href="@{/static}" class="ml-2 text-indigo-400 hover:text-white transition-colors">로그인</a>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            for="password_confirm">비밀번호 확인 (Confirm Password)</label>
+                        <div class="relative rounded-md shadow-sm">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span class="material-icons text-gray-400 text-lg">lock_reset</span>
+                            </div>
+                            <input
+                                class="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-10 py-2.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary focus:ring-primary sm:text-sm transition-colors"
+                                id="password_confirm" name="password_confirm" placeholder="••••••••" type="password" />
+                        </div>
+                    </div>
+                    <div class="pt-4">
+                        <button
+                            class="group relative flex w-full justify-center rounded-md border border-transparent bg-primary py-3 px-4 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all shadow-lg hover:shadow-xl dark:focus:ring-offset-surface-dark"
+                            type="submit">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span
+                                    class="material-icons text-white/70 group-hover:text-white transition-colors text-lg">check_circle</span>
+                            </span>
+                            가입하기
+                        </button>
                     </div>
                 </form>
-
-                <script>
-                    $(document).ready(function () {
-                        $('#registerForm').on('submit', function (e) {
-                            e.preventDefault();
-
-                            const $errorDiv = $('#errorMessage');
-                            const $successDiv = $('#successMessage');
-                            const $submitBtn = $('#submitBtn');
-
-                            // 메시지 초기화
-                            $errorDiv.addClass('hidden');
-                            $successDiv.addClass('hidden');
-
-                            // 버튼 비활성화
-                            $submitBtn.prop('disabled', true).text('처리 중...');
-
-                            const formData = {
-                                email: $('#email').val(),
-                                password: $('#password').val(),
-                                name: $('#name').val()
-                            };
-
-                            $.ajax({
-                                url: '/api/user',
-                                type: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify(formData),
-                                success: function (result) {
-                                    $successDiv.text('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.').removeClass('hidden');
-                                    setTimeout(function () {
-                                        window.location.href = '/';
-                                    }, 1500);
-                                },
-                                error: function (xhr) {
-                                    const result = xhr.responseJSON || {};
-                                    $errorDiv.text(result.message || '회원가입에 실패했습니다.').removeClass('hidden');
-                                    $submitBtn.prop('disabled', false).text('회원가입');
-                                }
-                            });
-                        });
-                    });
-                </script>
             </div>
         </div>
-    </main>
-
-    <footer class="py-6 border-t border-gray-800 text-center text-gray-500 text-sm">
-        <div
-            class="max-w-5xl mx-auto flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8">
-            <span class="font-medium">© 2026 CRIC Co. All rights reserved.</span>
-            <div class="flex space-x-4">
-                <a href="mailto:contact@cric.com" class="hover:text-indigo-400 transition-colors">Contact Us</a>
-                <a href="#" class="hover:text-indigo-400 transition-colors">Terms of Service</a>
+        <div class="bg-gray-50 dark:bg-gray-900 border-t border-border-light dark:border-border-dark p-6">
+            <div
+                class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-8 text-sm text-gray-500 dark:text-gray-400">
+                <a class="flex items-center hover:text-primary transition-colors" href="#">
+                    <span class="material-icons text-base mr-1">contact_support</span>
+                    Contact Us
+                </a>
+                <span class="hidden md:inline text-gray-300 dark:text-gray-700">|</span>
+                <a class="flex items-center hover:text-primary transition-colors" href="#">
+                    <span class="material-icons text-base mr-1">business_center</span>
+                    Company Info
+                </a>
+                <span class="hidden md:inline text-gray-300 dark:text-gray-700">|</span>
+                <span class="text-xs text-gray-400 dark:text-gray-600">© 2023 Corporate Inc. All rights reserved.</span>
             </div>
         </div>
-    </footer>
+    </div>
+    <button
+        class="fixed bottom-4 right-4 p-3 bg-surface-light dark:bg-surface-dark rounded-full shadow-lg border border-border-light dark:border-border-dark text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors z-50"
+        onclick="document.documentElement.classList.toggle('dark')">
+        <span class="material-icons block dark:hidden">dark_mode</span>
+        <span class="material-icons hidden dark:block">light_mode</span>
+    </button>
 
+    <script th:src="@{/js/jquery-4.0.0.min.js}"></script>
+    <script>
+        $(document).ready(function () {
+            // 폼 제출 이벤트 처리
+            $('form').on('submit', function (e) {
+                e.preventDefault();
+
+                // 입력값 가져오기
+                const name = $('#name').val().trim();
+                const email = $('#email').val().trim();
+                const password = $('#password').val();
+                const passwordConfirm = $('#password_confirm').val();
+
+                // 클라이언트 검증
+                if (!name) {
+                    alert('이름을 입력해주세요.');
+                    $('#name').focus();
+                    return;
+                }
+
+                if (!email) {
+                    alert('이메일을 입력해주세요.');
+                    $('#email').focus();
+                    return;
+                }
+
+                // 이메일 형식 검증
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('올바른 이메일 형식이 아닙니다.');
+                    $('#email').focus();
+                    return;
+                }
+
+                if (!password) {
+                    alert('비밀번호를 입력해주세요.');
+                    $('#password').focus();
+                    return;
+                }
+
+                if (password.length < 4) {
+                    alert('비밀번호는 최소 4자 이상이어야 합니다.');
+                    $('#password').focus();
+                    return;
+                }
+
+                if (password !== passwordConfirm) {
+                    alert('비밀번호가 일치하지 않습니다.');
+                    $('#password_confirm').focus();
+                    return;
+                }
+
+                // API 요청 데이터 준비
+                const registData = {
+                    name: name,
+                    email: email,
+                    password: password
+                };
+
+                // 버튼 비활성화 (중복 제출 방지)
+                const $submitBtn = $('button[type="submit"]');
+                $submitBtn.prop('disabled', true).text('가입 중...');
+
+                // 회원가입 API 호출
+                $.ajax({
+                    url: '/api/user',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(registData),
+                    success: function (response) {
+                        alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+                        // 로그인 페이지로 리다이렉트
+                        window.location.href = '/user/login';
+                    },
+                    error: function (xhr) {
+                        // 에러 처리
+                        let errorMessage = '회원가입에 실패했습니다.';
+
+                        if (xhr.status === 400) {
+                            // 검증 오류
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else {
+                                errorMessage = '입력 정보를 확인해주세요.';
+                            }
+                        } else if (xhr.status === 409) {
+                            errorMessage = '이미 등록된 이메일입니다.';
+                        } else if (xhr.status === 500) {
+                            errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                        }
+
+                        alert(errorMessage);
+
+                        // 버튼 다시 활성화
+                        $submitBtn.prop('disabled', false).html(`
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <span class="material-icons text-white/70 group-hover:text-white transition-colors text-lg">check_circle</span>
+                        </span>
+                        가입하기
+                    `);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

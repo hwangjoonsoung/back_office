@@ -1,143 +1,197 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Back Office - 로그인</title>
+<html class="light" lang="ko"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>SiloManager - 스마트한 사일로 관리의 시작</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
     <style>
         body {
-            background-color: #121212;
-            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
 </head>
-<script th:src="@{/js/tailwind.js}"></script>
-<script th:src="@{/js/jquery-4.0.0.min.js}"></script>
-
-<body class="h-screen flex flex-col font-sans">
-
-    <main class="flex-grow flex items-center justify-center px-4">
-        <div
-            class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-gray-700 rounded-xl p-8 bg-[#1e1e1e] shadow-2xl">
-
-            <div class="flex flex-col items-center justify-center space-y-4 border-r border-gray-700 md:pr-8">
-                <div
-                    class="w-32 h-32 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <span class="text-4xl font-bold italic">LOGO</span>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<!-- Wrapper for consistent layout -->
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <div class="layout-container flex h-full grow flex-col">
+        <!-- TopNavBar Component -->
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-6 md:px-20 lg:px-40 py-4 bg-white dark:bg-background-dark sticky top-0 z-50">
+            <div class="flex items-center gap-4 text-primary">
+                <div class="size-8">
+                    <svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
+                    </svg>
                 </div>
-                <h1 class="text-2xl font-semibold tracking-tight">CRIC Admin</h1>
-                <p class="text-gray-400 text-sm text-center">서비스의 효율적인 관리를 위한 <br />백오피스 시스템입니다.</p>
+                <h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">SiloManager</h2>
             </div>
-
-            <div class="flex flex-col space-y-6">
-                <h2 class="text-xl font-medium border-l-4 border-indigo-500 pl-3">Sign In</h2>
-                <form id="loginForm" class="space-y-4">
-                    <div>
-                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Email</label>
-                        <input type="email" name="email" id="email" required
-                            class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
-                            placeholder="이메일을 입력하세요">
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase text-gray-500 mb-1 font-bold">Password</label>
-                        <input type="password" name="password" id="password" required
-                            class="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-600"
-                            placeholder="비밀번호를 입력하세요">
-                    </div>
-                    <div id="errorMessage"
-                        class="hidden text-red-500 text-sm text-center py-2 bg-red-500/10 rounded-lg"></div>
-                    <div id="successMessage"
-                        class="hidden text-green-500 text-sm text-center py-2 bg-green-500/10 rounded-lg"></div>
-                    <button type="submit" id="submitBtn"
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition-transform active:scale-95">
-                        로그인
-                    </button>
-                    <div class="flex items-center justify-between text-xs text-gray-400 px-1">
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" id="rememberMe" class="accent-indigo-500">
-                            <span>계정 기억하기</span>
-                        </label>
-                        <a th:href="@{/user/new}" class="hover:text-white transition-colors">회원가입</a>
-                        <a href="#" class="hover:text-white transition-colors">비밀번호를 잊으셨나요?</a>
-                    </div>
-                </form>
-
-                <script>
-                    $(document).ready(function () {
-                        // 저장된 이메일 복원
-                        const savedEmail = localStorage.getItem('rememberedEmail');
-                        if (savedEmail) {
-                            $('#email').val(savedEmail);
-                            $('#rememberMe').prop('checked', true);
-                        }
-
-                        $('#loginForm').on('submit', function (e) {
-                            e.preventDefault();
-
-                            const $errorDiv = $('#errorMessage');
-                            const $successDiv = $('#successMessage');
-                            const $submitBtn = $('#submitBtn');
-
-                            // 메시지 초기화
-                            $errorDiv.addClass('hidden');
-                            $successDiv.addClass('hidden');
-
-                            // 버튼 비활성화
-                            $submitBtn.prop('disabled', true).text('로그인 중...');
-
-                            const email = $('#email').val();
-                            const password = $('#password').val();
-
-                            const formData = {
-                                email: email,
-                                password: password
-                            };
-
-                            // 계정 기억하기
-                            if ($('#rememberMe').is(':checked')) {
-                                localStorage.setItem('rememberedEmail', email);
-                            } else {
-                                localStorage.removeItem('rememberedEmail');
-                            }
-
-                            $.ajax({
-                                url: '/api/auth/login',
-                                type: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify(formData),
-                                success: function (result) {
-                                    localStorage.setItem('userRole', result.data.userRole);
-
-                                    $successDiv.text('로그인 성공! 대시보드로 이동합니다.').removeClass('hidden');
-                                    setTimeout(function () {
-                                        window.location.href = '/dashboard/';
-                                    }, 1000);
-                                },
-                                error: function (xhr) {
-                                    const result = xhr.responseJSON || {};
-                                    $errorDiv.text(result.message || '로그인에 실패했습니다.').removeClass('hidden');
-                                    $submitBtn.prop('disabled', false).text('로그인');
-                                }
-                            });
-                        });
-                    });
-                </script>
+            <div class="flex flex-1 justify-end gap-4 md:gap-8">
+                <nav class="hidden md:flex items-center gap-9">
+                    <a class="text-slate-700 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Features</a>
+                    <a class="text-slate-700 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Pricing</a>
+                    <a class="text-slate-700 dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
+                </nav>
+                <a th:onclick="|location.href='@{/user/login}'|"  class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all">
+                    <span class="truncate">Login</span>
+                </a>
             </div>
-        </div>
-    </main>
-
-    <footer class="py-6 border-t border-gray-800 text-center text-gray-500 text-sm">
-        <div
-            class="max-w-5xl mx-auto flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-8">
-            <span class="font-medium">© 2026 CRIC Co. All rights reserved.</span>
-            <div class="flex space-x-4">
-                <a href="mailto:contact@cric.com" class="hover:text-indigo-400 transition-colors">Contact Us</a>
-                <a href="#" class="hover:text-indigo-400 transition-colors">Terms of Service</a>
+        </header>
+        <main class="flex-1">
+            <!-- HeroSection Component -->
+            <section class="px-4 md:px-20 lg:px-40 py-10">
+                <div class="@container max-w-[1200px] mx-auto">
+                    <div class="@[480px]:p-0">
+                        <div class="flex min-h-[520px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 rounded-xl items-start justify-center px-8 md:px-16" data-alt="Abstract blue technological grid pattern background" style='background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAOlP9MZZVy0_MqRbNtInt67khFyX-0xYcv8bYg_IYtCu3qU3B9zwUquECni1fWCevYo3aOdPMh2rl5elIiuKEiTyUcOzI-yg8ssrKrrk_Lp7huFRvVeT_eGeiK1E-Hew6feoOdeGBkwZJ5Bt76vqBDRdaxgyLu6oUDr_yZjwCYBpyfoNAmVGDrkyOkI3AA06mZtcvKJ4hBkNAJghBnGehHnSzmLvcgZ8u9VsZ0d4CyTaJcvTG6NXv4jdqq2-IYFAh2s9i5FfOECQE");'>
+                            <div class="flex flex-col gap-4 text-left max-w-[600px]">
+                                <h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-6xl @[480px]:font-black">
+                                    스마트한 사일로<br/>관리의 시작
+                                </h1>
+                                <h2 class="text-slate-200 text-base font-normal leading-relaxed @[480px]:text-lg max-w-[500px]">
+                                    최첨단 IoT 기술과 데이터 분석을 통해 사일로 운영의 효율성을 극대화하세요. 실시간 재고 파악부터 예측 정비까지 한 번에 해결합니다.
+                                </h2>
+                            </div>
+                            <div class="flex gap-4">
+                                <button class="flex min-w-[140px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:scale-105 transition-transform">
+                                    <span class="truncate">시작하기</span>
+                                </button>
+                                <button class="flex min-w-[140px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-white/10 backdrop-blur-md border border-white/20 text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-white/20 transition-all">
+                                    <span class="truncate">문의하기</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- FeatureSection Component -->
+            <section class="px-4 md:px-20 lg:px-40 py-16 bg-white dark:bg-background-dark/50">
+                <div class="max-w-[1200px] mx-auto flex flex-col gap-12 px-4 @container">
+                    <div class="flex flex-col gap-4 text-center items-center">
+                        <h2 class="text-slate-900 dark:text-white tracking-light text-3xl font-bold leading-tight @[480px]:text-4xl @[480px]:font-black">
+                            주요 기능
+                        </h2>
+                        <p class="text-slate-600 dark:text-slate-400 text-lg font-normal leading-normal max-w-[720px]">
+                            사일로 운영의 혁신을 위한 핵심 기능을 소개합니다.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Feature Card 1 -->
+                        <div class="flex flex-1 gap-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 flex-col shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center">
+                                <span class="material-symbols-outlined text-3xl">monitoring</span>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <h3 class="text-slate-900 dark:text-white text-xl font-bold leading-tight">실시간 모니터링</h3>
+                                <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed">
+                                    실시간으로 재고를 확인하고 임계치 알림을 통해 사고를 예방하세요. 센서 데이터를 1초 단위로 추적합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Feature Card 2 -->
+                        <div class="flex flex-1 gap-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 flex-col shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center">
+                                <span class="material-symbols-outlined text-3xl">insights</span>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <h3 class="text-slate-900 dark:text-white text-xl font-bold leading-tight">데이터 분석</h3>
+                                <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed">
+                                    축적된 데이터를 바탕으로 정밀한 수요 예측과 리포트를 제공합니다. AI 기반 분석으로 효율적인 의사결정을 지원합니다.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Feature Card 3 -->
+                        <div class="flex flex-1 gap-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 flex-col shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-primary bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center">
+                                <span class="material-symbols-outlined text-3xl">verified_user</span>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <h3 class="text-slate-900 dark:text-white text-xl font-bold leading-tight">보안 및 안정성</h3>
+                                <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed">
+                                    엔터프라이즈급 보안 시스템으로 소중한 데이터를 안전하게 보호합니다. 24/7 보안 관제와 이중화 서버를 운영합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- CTASection Component -->
+            <section class="px-4 md:px-20 lg:px-40 py-20 bg-background-light dark:bg-background-dark">
+                <div class="@container max-w-[1200px] mx-auto">
+                    <div class="flex flex-col items-center justify-center gap-8 px-4 py-16 bg-primary/5 dark:bg-primary/10 rounded-3xl border border-primary/10">
+                        <div class="flex flex-col gap-4 text-center max-w-[720px]">
+                            <h2 class="text-slate-900 dark:text-white tracking-light text-3xl font-bold leading-tight @[480px]:text-4xl @[480px]:font-black">
+                                지금 바로 시작하세요
+                            </h2>
+                            <p class="text-slate-600 dark:text-slate-400 text-lg font-normal leading-normal">
+                                스마트한 관리 시스템으로 생산성을 높이세요. <br class="hidden md:block"/> 이미 수많은 기업들이 SiloManager와 함께하고 있습니다.
+                            </p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center px-4">
+                            <button class="flex min-w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                                <span class="truncate">데모 신청하기</span>
+                            </button>
+                            <button class="flex min-w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-lg font-bold leading-normal tracking-[0.015em] hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                                <span class="truncate">Contact Us</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Footer Component -->
+        <footer class="px-4 md:px-20 lg:px-40 py-12 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark">
+            <div class="max-w-[1200px] mx-auto flex flex-col gap-10 items-center @container">
+                <div class="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+                    <a class="text-slate-500 dark:text-slate-400 text-base font-normal hover:text-primary transition-colors" href="#">Contact Us</a>
+                    <a class="text-slate-500 dark:text-slate-400 text-base font-normal hover:text-primary transition-colors" href="#">Company Info</a>
+                    <a class="text-slate-500 dark:text-slate-400 text-base font-normal hover:text-primary transition-colors" href="#">Terms of Service</a>
+                    <a class="text-slate-500 dark:text-slate-400 text-base font-normal hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-all" href="#">
+                        <span class="material-symbols-outlined">share</span>
+                    </a>
+                    <a class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-all" href="#">
+                        <span class="material-symbols-outlined">alternate_email</span>
+                    </a>
+                    <a class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-all" href="#">
+                        <span class="material-symbols-outlined">public</span>
+                    </a>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <p class="text-slate-400 dark:text-slate-500 text-sm font-normal">© 2024 SiloManager Inc. All rights reserved.</p>
+                    <p class="text-slate-400 dark:text-slate-500 text-xs font-normal">서울특별시 강남구 테헤란로 123 (Silo Building)</p>
+                </div>
             </div>
-        </div>
-    </footer>
-
-</body>
-
-</html>
+        </footer>
+    </div>
+</div>
+</body></html>

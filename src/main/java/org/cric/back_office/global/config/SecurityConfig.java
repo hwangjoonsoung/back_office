@@ -36,7 +36,7 @@ public class SecurityConfig {
                                                 .authenticationEntryPoint(customAuthenticationEntryPoint))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/js/**", "/css/**", "/images/**", "/api/auth/login",
-                                                                "/api/user", "/", "/test/**",
+                                                                "/api/user", "/", "/user/login",
                                                                 "/user/new", "/example/error.html")
                                                 .permitAll()
                                                 // GOD 권한만 접근 가능한 API
