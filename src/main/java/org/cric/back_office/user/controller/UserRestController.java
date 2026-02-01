@@ -5,11 +5,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.global.dto.ApiResponse;
+import org.cric.back_office.global.dto.UserPrincipal;
 import org.cric.back_office.user.dto.*;
 import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.ApplicationScope;
 
@@ -80,13 +82,13 @@ public class UserRestController {
 
     /**
      * 로그아웃 API
-     * POST /api/auth/{userid}/logout
+     * POST /api/auth/logout
      */
-    @PostMapping("/api/auth/{userid}/logout")
+    @PostMapping("/api/auth/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
-            @PathVariable(name = "userId") Long userid,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             HttpServletResponse httpResponse) {
-        userService.logout(userid);
+        userService.logout(userPrincipal.getUserId());
 
         // 쿠키 삭제
         Cookie accessTokenCookie = new Cookie("accessToken", null);

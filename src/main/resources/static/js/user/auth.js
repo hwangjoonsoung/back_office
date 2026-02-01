@@ -195,7 +195,7 @@ $(document).ready(function () {
 function logout() {
     const userId = /*[[${userid}]]*/ '';
     $.ajax({
-        url: `/api/auth/${userId}/logout`,
+        url: '/api/auth/logout',
         type: 'POST',
         contentType: 'application/json',
         success: function (response) {
