@@ -35,9 +35,13 @@ public class SecurityConfig {
                                 .exceptionHandling(exception -> exception
                                                 .authenticationEntryPoint(customAuthenticationEntryPoint))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/js/**", "/css/**", "/images/**", "/api/auth/login",
-                                                                "/api/user", "/", "/test/**",
-                                                                "/user/new", "/example/error.html")
+                                                .requestMatchers("/js/**", "/css/**", "/images/**",
+                                                        "/api/auth/login",
+                                                        "/api/user",
+                                                        "/",
+                                                        "/user/login",
+                                                        "/user/new",
+                                                        "/example/error.html")
                                                 .permitAll()
                                                 // GOD 권한만 접근 가능한 API
                                                 .requestMatchers("/admin/**").hasRole("GOD")

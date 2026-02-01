@@ -5,11 +5,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.global.dto.ApiResponse;
+import org.cric.back_office.global.dto.UserPrincipal;
 import org.cric.back_office.user.dto.*;
 import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.ApplicationScope;
 
@@ -84,9 +86,9 @@ public class UserRestController {
      */
     @PostMapping("/api/auth/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
-            @RequestBody LogoutRequestDto logoutRequestDto,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             HttpServletResponse httpResponse) {
-        userService.logout(logoutRequestDto.getUserId());
+        userService.logout(userPrincipal.getUserId());
 
         // 쿠키 삭제
         Cookie accessTokenCookie = new Cookie("accessToken", null);
@@ -180,17 +182,17 @@ public class UserRestController {
      * 초대받은 링크를 클릭하면 silo 입장 권한 획득
      * Post /api/user/{id}/silo/{id}/accept
      **/
-    @PostMapping("/api/user/{userId}/silo/{siloId}/accept")
-    public ResponseEntity<Void> userAcceptSilo(@PathVariable("userId") Long userId,@PathVariable("siloId")Long siloId) {
-        userService.userAcceptSilo(userId, siloId);
-    }
+//    @PostMapping("/api/user/{userId}/silo/{siloId}/accept")
+//    public ResponseEntity<Void> userAcceptSilo(@PathVariable("userId") Long userId,@PathVariable("siloId")Long siloId) {
+//        userService.userAcceptSilo(userId, siloId);
+//    }
 
     /**
      * 이메일로 정상적으로 이용 가능한 회원인지 확인
      * Get /api/user/{email}/userStatus
      **/
-    @GetMapping("/api/user/{userEmail}/userStatus")
-    public ResponseEntity<Void> checkUserStatusByEmail(@PathVariable("userEmail") String userEmail) {
-        userService.checkUserStatusByEmail(userEmail);
-    }
+//    @GetMapping("/api/user/{userEmail}/userStatus")
+//    public ResponseEntity<Void> checkUserStatusByEmail(@PathVariable("userEmail") String userEmail) {
+//        userService.checkUserStatusByEmail(userEmail);
+//    }
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- Footer Fragment -->
+    <footer th:fragment="footer"
+        class="bg-card-light dark:bg-card-dark border-t border-border-light dark:border-border-dark mt-auto py-8">
+        <div class="container mx-auto px-6">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                <div class="flex items-center gap-6">
+                    <a class="hover:text-primary transition-colors" href="#">Contact Us</a>
+                    <a class="hover:text-primary transition-colors" href="#">Company Info</a>
+                    <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                </div>
+                <div>
+                    © 2023 SiloManager Inc. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

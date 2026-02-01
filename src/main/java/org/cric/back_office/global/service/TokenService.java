@@ -43,7 +43,7 @@ public class TokenService {
     /**
      * 사용자의 토큰 ID 삭제 (로그아웃 시)
      */
-    public void removeTokenId(Integer userId) {
+    public void removeTokenId(Long userId) {
         String key = TOKEN_KEY_PREFIX + userId;
         redisTemplate.delete(key);
     }

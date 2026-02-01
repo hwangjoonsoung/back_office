@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.cric.back_office.global.dto.UserPrincipal;
 import org.cric.back_office.global.service.TokenService;
 import org.cric.back_office.global.util.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -63,8 +64,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String name = jwtUtil.getNameFromToken(token);
                 String role = jwtUtil.getRoleFromToken(token);
 
+                UserPrincipal userPrincipal = new UserPrincipal(userId, email, name, role);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        name, // principal로 name 저장 (수정 시 사용)
+                        userPrincipal, // principal로 UserPrincipal 저장
                         null,
                         Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role)));
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

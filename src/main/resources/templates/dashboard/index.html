@@ -1,10 +1,382 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Modern Silo Dashboard</title>
+    <link th:href="@{/css/inter-font.css}" rel="stylesheet" />
+    <link th:href="@{/css/material-symbols.css}" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script th:src="@{/js/grobal/jquery-4.0.0.min.js}"></script>
+    <script th:src="@{/js/user/auth.js}"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Neon blue/bright blue as primary accent
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#111827", // Deep charcoal/almost black
+                        "card-light": "#ffffff",
+                        "card-dark": "#1f2937", // Slightly lighter charcoal for cards
+                        "text-light": "#1f2937",
+                        "text-dark": "#e5e7eb",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#374151",
+                        "header-dark": "#0f172a", // Very dark slate for the new header
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px -3px rgba(59, 130, 246, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        .header-dropdown-content {
+            @apply invisible opacity-0 translate-y-2 transition-all duration-200 ease-in-out absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1e293b] border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl py-2 z-50;
+        }
+
+        .header-dropdown-trigger:hover .header-dropdown-content {
+            @apply visible opacity-100 translate-y-0;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-body text-text-light dark:text-text-dark min-h-screen flex flex-col transition-colors duration-300">
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main class="flex-grow container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
+            <section class="flex flex-col h-full gap-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-lg">layers</span>
+                        Silos
+                    </h2>
+                    <button onclick="openCreateSiloModal()"
+                        class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-lg hover:shadow-blue-500/30">
+                        <span class="material-symbols-outlined text-sm">add</span>
+                        Create Silo
+                    </button>
+                </div>
+                <div
+                    class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-sm flex-grow">
+                    <!-- Silo 리스트가 있을 때 -->
+                    <div th:if="${siloList != null and !siloList.isEmpty()}"
+                        class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <div th:each="silo, iterStat : ${siloList}"
+                            class="group relative bg-background-light dark:bg-gray-800 border border-transparent hover:border-primary/50 rounded-lg p-4 cursor-pointer transition-all hover:shadow-glow flex flex-col items-center justify-center aspect-square text-center">
+
+                            <!-- Icon Container with dynamic background color -->
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"
+                                th:classappend="${iterStat.index % 8 == 0 ? 'bg-blue-100 dark:bg-blue-900/30' : 
+                                                   iterStat.index % 8 == 1 ? 'bg-purple-100 dark:bg-purple-900/30' :
+                                                   iterStat.index % 8 == 2 ? 'bg-green-100 dark:bg-green-900/30' :
+                                                   iterStat.index % 8 == 3 ? 'bg-orange-100 dark:bg-orange-900/30' :
+                                                   iterStat.index % 8 == 4 ? 'bg-pink-100 dark:bg-pink-900/30' :
+                                                   iterStat.index % 8 == 5 ? 'bg-indigo-100 dark:bg-indigo-900/30' :
+                                                   iterStat.index % 8 == 6 ? 'bg-teal-100 dark:bg-teal-900/30' :
+                                                   'bg-red-100 dark:bg-red-900/30'}">
+                                <!-- Icon with dynamic text color -->
+                                <span class="material-symbols-outlined" th:classappend="${iterStat.index % 8 == 0 ? 'text-primary' : 
+                                                        iterStat.index % 8 == 1 ? 'text-purple-500' :
+                                                        iterStat.index % 8 == 2 ? 'text-green-500' :
+                                                        iterStat.index % 8 == 3 ? 'text-orange-500' :
+                                                        iterStat.index % 8 == 4 ? 'text-pink-500' :
+                                                        iterStat.index % 8 == 5 ? 'text-indigo-500' :
+                                                        iterStat.index % 8 == 6 ? 'text-teal-500' :
+                                                        'text-red-500'}">inventory_2</span>
+                            </div>
+
+                            <h3 class="font-medium text-sm" th:text="${silo.name}">Silo Name</h3>
+                            <p class="text-xs text-gray-500 mt-1" th:text="'ID: ' + ${silo.id}">ID: 1</p>
+                            <p class="text-xs text-gray-400 mt-0.5" th:if="${silo.createBy != null}"
+                                th:text="'by ' + ${silo.createBy}">by Admin</p>
+                        </div>
+                    </div>
+
+                    <!-- Silo 리스트가 비어있을 때 -->
+                    <div th:if="${siloList == null or siloList.isEmpty()}"
+                        class="flex flex-col items-center justify-center py-16 text-center">
+                        <div
+                            class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-gray-400 text-4xl">inventory_2</span>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">No Silos Found</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-500">You don't have any silos yet. Create one to
+                            get started!</p>
+                    </div>
+                </div>
+            </section>
+            <section class="flex flex-col h-full gap-4">
+                <div class="flex justify-between items-center h-[36px]">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-lg">history</span>
+                        Recent History
+                    </h2>
+                    <a class="text-sm text-primary hover:text-blue-400 font-medium" href="#">View All</a>
+                </div>
+                <div
+                    class="bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-sm flex-grow">
+                    <div class="space-y-3">
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-primary text-sm">update</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Alpha Silo Updated</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Inventory levels adjusted manually.
+                                </p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">2m ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-green-500 text-sm">add_task</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Gamma Silo Created</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">New silo initialized successfully.
+                                </p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">1h ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-red-500 text-sm">error_outline</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Connection Lost</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Theta Silo went offline briefly.</p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">3h ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-purple-500 text-sm">person</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">User Login</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Admin accessed the dashboard.</p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">5h ago</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-indigo-500 text-sm">sync</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Data Sync</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Automatic nightly sync completed.
+                                </p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">Yesterday</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-750 border border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all cursor-default">
+                            <div
+                                class="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-orange-500 text-sm">settings</span>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-medium">Config Update</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Global settings modified.</p>
+                            </div>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">Yesterday</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Create Silo Modal -->
+    <div id="createSiloModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-2xl max-w-md w-full transform transition-all"
+            onclick="event.stopPropagation()">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-border-light dark:border-border-dark">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary">add_circle</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-text-light dark:text-text-dark">Create New Silo</h3>
+                </div>
+                <button onclick="closeCreateSiloModal()"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <form id="createSiloForm" class="p-6 space-y-5">
+                <!-- Silo Name -->
+                <div>
+                    <label for="siloName" class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">
+                        Silo Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="siloName" name="name" required placeholder="Enter silo name"
+                        class="w-full px-4 py-2.5 bg-background-light dark:bg-gray-800 border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-text-light dark:text-text-dark placeholder-gray-400" />
+                </div>
+
+                <!-- Description (Optional) -->
+                <div>
+                    <label for="siloDescription"
+                        class="block text-sm font-medium text-text-light dark:text-text-dark mb-2">
+                        Description <span class="text-gray-400 text-xs">(Optional)</span>
+                    </label>
+                    <textarea id="siloDescription" name="description" rows="3" placeholder="Enter silo description"
+                        class="w-full px-4 py-2.5 bg-background-light dark:bg-gray-800 border border-border-light dark:border-border-dark rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-text-light dark:text-text-dark placeholder-gray-400 resize-none"></textarea>
+                </div>
+
+                <!-- Info Message -->
+                <div
+                    class="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <span class="material-symbols-outlined text-primary text-sm mt-0.5">info</span>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">
+                        You'll be automatically added as the owner of this silo and can invite other members later.
+                    </p>
+                </div>
+            </form>
+
+            <!-- Modal Footer -->
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-border-light dark:border-border-dark">
+                <button onclick="closeCreateSiloModal()" type="button"
+                    class="px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    Cancel
+                </button>
+                <button onclick="submitCreateSilo()" type="button"
+                    class="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors shadow-lg shadow-primary/20 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">check</span>
+                    Create Silo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check for saved user preference, if any, on load of the website
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+
+        // Modal Functions
+        function openCreateSiloModal() {
+            const modal = document.getElementById('createSiloModal');
+            modal.classList.remove('hidden');
+            // Focus on the first input
+            setTimeout(() => {
+                document.getElementById('siloName').focus();
+            }, 100);
+        }
+
+        function closeCreateSiloModal() {
+            const modal = document.getElementById('createSiloModal');
+            modal.classList.add('hidden');
+            // Reset form
+            document.getElementById('createSiloForm').reset();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('createSiloModal')?.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeCreateSiloModal();
+            }
+        });
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('createSiloModal');
+                if (!modal.classList.contains('hidden')) {
+                    closeCreateSiloModal();
+                }
+            }
+        });
+
+        // Submit Create Silo
+        function submitCreateSilo() {
+            const form = document.getElementById('createSiloForm');
+            const siloName = document.getElementById('siloName').value.trim();
+
+            if (!siloName) {
+                alert('Please enter a silo name');
+                document.getElementById('siloName').focus();
+                return;
+            }
+
+            // Prepare form data
+            const formData = {
+                name: siloName,
+                description: document.getElementById('siloDescription').value.trim()
+            };
+
+            // Send POST request to create silo
+            fetch('/api/silo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Failed to create silo');
+                })
+                .then(data => {
+                    // Success - close modal and reload page
+                    closeCreateSiloModal();
+                    alert('Silo created successfully!');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to create silo. Please try again.');
+                });
+        }
+    </script>
+    <button
+        class="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors z-50"
+        onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <span class="material-symbols-outlined">dark_mode</span>
+    </button>
 </body>
+
 </html>

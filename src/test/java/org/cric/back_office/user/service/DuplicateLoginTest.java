@@ -10,6 +10,7 @@ import org.cric.back_office.user.enums.UserStatus;
 import org.cric.back_office.user.repository.RefreshTokenRepository;
 import org.cric.back_office.user.repository.UserJpaRepository;
 import org.cric.back_office.user.repository.UserRepository;
+import org.cric.back_office.work.repository.SiloJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,19 +52,21 @@ class DuplicateLoginTest {
         private TokenService tokenService;
 
         private UserService userService;
+        private SiloJpaRepository siloJpaRepository;
 
         private User testUser;
         private LoginRequestDto loginRequest;
 
         @BeforeEach
         void setUp() {
-                userService = new UserService(
-                                userRepository,
-                                userJpaRepository,
-                                refreshTokenRepository,
-                                jwtUtil,
-                                passwordEncoder,
-                                tokenService);
+            userService = new UserService(
+                    userRepository,
+                    userJpaRepository,
+                    refreshTokenRepository,
+                    jwtUtil,
+                    passwordEncoder,
+                    tokenService, siloJpaRepository
+            );
 
                 // 테스트용 사용자 설정
                 testUser = mock(User.class);

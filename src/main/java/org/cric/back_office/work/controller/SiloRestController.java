@@ -3,12 +3,14 @@ package org.cric.back_office.work.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.cric.back_office.global.dto.ApiResponse;
+import org.cric.back_office.global.dto.UserPrincipal;
 import org.cric.back_office.work.dto.SiloCreateDto;
 import org.cric.back_office.work.dto.SiloResponseDto;
 import org.cric.back_office.work.dto.SiloUpdateDto;
 import org.cric.back_office.work.service.SiloService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +27,8 @@ public class SiloRestController {
      * POST /api/silo
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> createSilo(@Valid @RequestBody SiloCreateDto dto) {
-        Long siloId = siloService.createSilo(dto);
+    public ResponseEntity<ApiResponse<Long>> createSilo(@Valid @RequestBody SiloCreateDto dto,@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Long siloId = siloService.createSilo(dto,userPrincipal);
         ApiResponse<Long> response = new ApiResponse<>("ok", HttpStatus.CREATED.value(), siloId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

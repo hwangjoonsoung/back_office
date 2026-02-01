@@ -36,6 +36,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .subject(String.valueOf(userId))
+                .claim("userid", userId)
                 .claim("email", email)
                 .claim("name", name)
                 .claim("tokenId", tokenId)

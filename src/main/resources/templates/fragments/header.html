@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- Header Fragment -->
+    <header th:fragment="header"
+        class="w-full bg-background-light dark:bg-background-dark border-b border-border-light dark:border-border-dark px-6 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm transition-colors duration-300">
+        <div class="flex items-center gap-3">
+            <div class="bg-primary/20 p-2 rounded-lg">
+                <span class="material-symbols-outlined text-primary text-2xl">business_center</span>
+            </div>
+            <span class="text-text-light dark:text-white text-lg font-semibold tracking-wide">ServiceLogo</span>
+        </div>
+        <div class="flex items-center gap-4 relative header-dropdown-trigger">
+            <button
+                class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors text-text-light dark:text-gray-300 hover:text-black dark:hover:text-white">
+                <span class="material-symbols-outlined text-3xl">account_circle</span>
+            </button>
+            <div class="header-dropdown-content">
+                <a class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    href="javascript:alert('회원정보 수정 폼 모달로 띄우기')">
+                    회원정보
+                </a>
+                <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <a class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                    onclick="logout()">
+                    로그아웃
+                </a>
+            </div>
+        </div>
+    </header>
+</body>
+
+</html>
