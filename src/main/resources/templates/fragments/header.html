@@ -22,12 +22,12 @@
             </button>
             <div class="header-dropdown-content">
                 <a class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    href="#">
+                    href="javascript:alert('회원정보 수정 폼 모달로 띄우기')">
                     회원정보
                 </a>
                 <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                 <a class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-700 dark:hover:text-red-300 transition-colors"
-                    href="#">
+                    onclick="logout()">
                     로그아웃
                 </a>
             </div>
@@ -36,3 +36,21 @@
 </body>
 
 </html>
+<script th:inline="javascript">
+    function logout() {
+        const userId = /*[[${userid}]]*/ '';
+        $.ajax({
+            url: `/api/auth/${userId}/logout`,
+            type: 'POST',
+            contentType: 'application/json',
+            success: function (response) {
+                window.location.href = '/user/login';
+            },
+            error: function (xhr) {
+                // 에러 처리
+                let errorMessage = '로그아웃을 실패했습니다.';
+                alert(errorMessage)
+            }
+        });
+    }
+</script>

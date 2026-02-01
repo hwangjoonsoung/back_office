@@ -20,7 +20,8 @@ public class DashBoardController {
         // 사용자 ID로 Silo 리스트 조회
         var siloList = siloService.findByUserId(userPrincipal.getUserId());
         model.addAttribute("siloList", siloList);
-        
+        model.addAttribute("userid", userPrincipal.getUserId());
+
         return "/dashboard/index.html";
     }
 }

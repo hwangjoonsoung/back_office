@@ -80,13 +80,13 @@ public class UserRestController {
 
     /**
      * 로그아웃 API
-     * POST /api/auth/logout
+     * POST /api/auth/{userid}/logout
      */
-    @PostMapping("/api/auth/logout")
+    @PostMapping("/api/auth/{userid}/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
-            @RequestBody LogoutRequestDto logoutRequestDto,
+            @PathVariable(name = "userId") Long userid,
             HttpServletResponse httpResponse) {
-        userService.logout(logoutRequestDto.getUserId());
+        userService.logout(userid);
 
         // 쿠키 삭제
         Cookie accessTokenCookie = new Cookie("accessToken", null);

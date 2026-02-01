@@ -158,7 +158,7 @@ public class UserService {
     }
 
     @Transactional
-    public void logout(Integer userId) {
+    public void logout(Long userId) {
         // Redis에서 토큰 ID 삭제 (현재 세션 무효화)
         tokenService.removeTokenId(userId);
         // DB에서 Refresh Token 삭제
