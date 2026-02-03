@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SiloJpaRepository extends JpaRepository<Silo, Long> {
-    List<Silo> findAllByIsDeleted(Boolean isDeleted);
-
-    List<Project> findProjectBySiloId(Long id);
+public interface ProjectJpaRepository extends JpaRepository<Project, Long> {
+    List<Project> findProjectBySiloIdAndIsDeleted(Long siloId,boolean isDeleted);
+    List<Project> findBysiloAndIsDeleted(Silo silo, Boolean isDeleted);
 }

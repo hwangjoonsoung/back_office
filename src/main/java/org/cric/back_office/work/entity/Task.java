@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.cric.back_office.global.entity.EditorEntity;
+import org.cric.back_office.user.enums.ProgressStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,10 @@ public class Task extends EditorEntity {
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "task_status", nullable = false, length =10)
+    private ProgressStatus progressStatus = ProgressStatus.approved;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
     private List<TaskFile> taskFiles = new ArrayList<>();
