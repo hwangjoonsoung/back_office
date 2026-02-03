@@ -19,9 +19,12 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @GetMapping("/project/{siloId}")
-    public String projectList(@PathVariable("siloId") Long siloId, Model model) {
-        List<ProjectResponseDto> projectDtoList = projectService.getProjectList(siloId);
+    @GetMapping("/project/{projectId}")
+    public String projectList(@PathVariable("projectId") Long projectId, Model model) {
+        /**
+         * 여기서는 task를 가져와야 함
+         **/
+        List<ProjectResponseDto> projectDtoList = projectService.getProjectList(projectId);
         model.addAttribute("projectList", projectDtoList);
         return "/project/index.html";
     }

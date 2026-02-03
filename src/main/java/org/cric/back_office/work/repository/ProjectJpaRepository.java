@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface ProjectJpaRepository extends JpaRepository<Project, Long> {
     List<Project> findProjectBySiloIdAndIsDeleted(Long siloId,boolean isDeleted);
-    List<Project> findBysiloAndIsDeleted(Silo silo, Boolean isDeleted);
+    List<Project> findBySiloAndIsDeleted(Silo silo, Boolean isDeleted);
 }
