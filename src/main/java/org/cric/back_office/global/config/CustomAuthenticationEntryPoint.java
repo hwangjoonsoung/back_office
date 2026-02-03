@@ -30,7 +30,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             response.getWriter().write("{\"status\": 401, \"message\": \"인증이 필요합니다. 로그인해주세요.\"}");
         } else {
             // 페이지 요청인 경우 error.html로 리다이렉트
-            response.sendRedirect("/example/error.html?error=unauthorized&message=인증이 필요합니다");
+            response.sendRedirect("/global/error.html?error=unauthorized&message=인증이 필요합니다");
         }
     }
 }

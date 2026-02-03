@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.equals("/user/new") ||
                 path.equals("/api/auth/login") ||
                 path.equals("/api/user") ||
-                path.equals("/example/error.html");
+                path.equals("/global/error.html");
     }
 
     @Override
@@ -119,7 +119,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.getWriter()
                     .write("{\"status\": 401, \"error\": \"" + errorCode + "\", \"message\": \"" + message + "\"}");
         } else {
-            response.sendRedirect("/example/error.html?error=" + errorCode + "&message="
+            response.sendRedirect("/global/error.html?error=" + errorCode + "&message="
                     + java.net.URLEncoder.encode(message, "UTF-8"));
         }
     }

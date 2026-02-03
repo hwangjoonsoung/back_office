@@ -35,9 +35,9 @@ public class GlobalExceptionHandler {
                 try {
                         String encodedMessage = URLEncoder.encode(message, "UTF-8");
                         return new RedirectView(
-                                        "/example/error.html?error=" + errorCode + "&message=" + encodedMessage);
+                                        "/global/error.html?error=" + errorCode + "&message=" + encodedMessage);
                 } catch (UnsupportedEncodingException e) {
-                        return new RedirectView("/example/error.html?error=" + errorCode);
+                        return new RedirectView("/global/error.html?error=" + errorCode);
                 }
         }
 

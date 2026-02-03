@@ -1,4 +1,4 @@
-package org.cric.back_office.grobal.service;
+package org.cric.back_office.global.service;
 
 import org.cric.back_office.global.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;

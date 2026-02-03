@@ -23,12 +23,12 @@ public class UserController {
         return "/user/user_login.html";
     }
 
-    @GetMapping("/example/error.html")
+    @GetMapping("/global/error.html")
     public String errorPage(@RequestParam(required = false, defaultValue = "unknown") String error,
             @RequestParam(required = false, defaultValue = "오류가 발생했습니다") String message,
             Model model) {
         model.addAttribute("errorCode", error);
         model.addAttribute("errorMessage", message);
-        return "/example/error.html";
+        return "/global/error.html";
     }
 }

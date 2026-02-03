@@ -41,7 +41,7 @@ public class SecurityConfig {
                                                         "/",
                                                         "/user/login",
                                                         "/user/new",
-                                                        "/example/error.html")
+                                                        "/global/error.html")
                                                 .permitAll()
                                                 // GOD 권한만 접근 가능한 API
                                                 .requestMatchers("/admin/**").hasRole("GOD")
