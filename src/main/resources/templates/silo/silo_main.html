@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Silo Project Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2563eb", // Royal Blue
+                        "background-light": "#f3f4f6", // Gray 100
+                        "background-dark": "#111827", // Gray 900
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1f2937",
+                        "border-light": "#e5e7eb",
+                        "border-dark": "#374151",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }::-webkit-scrollbar {
+                                                      width: 6px;
+                                                      height: 6px;
+                                                  }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 h-screen flex flex-col overflow-hidden transition-colors duration-200">
+<header class="h-16 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark flex items-center justify-between px-4 shrink-0 z-20 shadow-sm">
+    <div class="flex items-center gap-4">
+        <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400">
+            <span class="material-icons-outlined">menu</span>
+        </button>
+        <div class="relative group">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-border-light dark:border-border-dark rounded-md cursor-pointer hover:border-primary transition-colors">
+                <span class="material-icons-outlined text-primary text-sm">domain</span>
+                <span class="font-medium text-sm">Design Silo A</span>
+                <span class="material-icons-outlined text-gray-400 text-sm">expand_more</span>
+            </div>
+            <div class="absolute top-full left-0 mt-1 w-48 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded shadow-lg hidden group-hover:block z-50">
+                <a class="block px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700" href="#">Engineering Silo</a>
+                <a class="block px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700" href="#">Marketing Silo</a>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 max-w-xl px-8">
+        <div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons-outlined text-gray-400">search</span>
+</span>
+            <input class="block w-full pl-10 pr-3 py-2 border border-border-light dark:border-border-dark rounded-md leading-5 bg-gray-50 dark:bg-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm text-gray-900 dark:text-gray-100" placeholder="Search projects inside silo..." type="text"/>
+        </div>
+    </div>
+    <div class="flex items-center gap-3">
+        <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400" title="Main Page">
+            <span class="material-icons-outlined">home</span>
+        </button>
+        <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 relative">
+            <span class="material-icons-outlined">notifications</span>
+            <span class="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-gray-800"></span>
+        </button>
+        <button class="ml-2 flex items-center gap-2 focus:outline-none">
+            <img alt="User avatar" class="h-8 w-8 rounded-full object-cover border border-border-light dark:border-border-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcjrWJorRCKdUBBemzVtajVtd5Zg6-rAPlj0PazCme7u8cPAXY5IjD7WX6CvcW90AMyyMmsapK5IN4cQzxgIxjp8NU9v34PVVDLqL92lZ_LwNS6rP2LOccnOuDvBfOCxQhRwCePrhtdKKPgWrI2cgh1YmXf3rg_hAOnDxa4VqsoWLjFt9XMjfs3FCUyVYX1lYTfFkwTsA3ryb60IqBzQwaHi1OuxcJbhDd7TpDy4K1WIm-FhLdILtsRdK79OB6IcCNb8L9u_p-smQ"/>
+        </button>
+    </div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+    <aside class="w-64 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col shrink-0 overflow-y-auto">
+        <div class="p-4 space-y-6">
+            <button class="w-full bg-primary hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-md shadow-sm flex items-center justify-center gap-2 transition-colors">
+                <span class="material-icons-outlined text-lg">add</span>
+                <span>New Project</span>
+            </button>
+            <nav class="space-y-1">
+                <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md bg-blue-50 dark:bg-blue-900/30 text-primary" href="#">
+                    <span class="material-icons-outlined text-lg">dashboard</span>
+                    Silo Main
+                </a>
+                <div class="pt-4 pb-1">
+                    <p class="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Overview</p>
+                </div>
+                <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+                    <span class="material-icons-outlined text-lg">folder_open</span>
+                    My Projects
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+                    <span class="material-icons-outlined text-lg">calendar_today</span>
+                    Calendar
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+                    <span class="material-icons-outlined text-lg">bookmark_border</span>
+                    Bookmarks
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+                    <span class="material-icons-outlined text-lg">delete_outline</span>
+                    Trash
+                </a>
+                <div class="pt-6 pb-1 flex justify-between items-center px-3">
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Recent Updates</p>
+                </div>
+                <div class="space-y-1">
+                    <a class="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <span class="truncate">Q4 Marketing Plan</span>
+                    </a>
+                    <a class="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                        <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                        <span class="truncate">Website Redesign</span>
+                    </a>
+                    <a class="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span class="truncate">Mobile App Refactor</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="pt-4 border-t border-border-light dark:border-border-dark">
+                <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <span class="material-icons-outlined text-lg">person_add</span>
+                    Invite to Silo
+                </button>
+            </div>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden relative">
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="mb-8 flex justify-between items-end">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your active projects and track progress.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <span class="material-icons-outlined text-sm">filter_list</span> Filter
+                    </button>
+                    <button class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <span class="material-icons-outlined text-sm">sort</span> Sort
+                    </button>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
+                    <div class="flex items-center gap-6">
+                        <div class="w-24 text-center shrink-0">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    Active
+                                </span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors cursor-pointer">Project Alpha Redesign</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Updated 2 hours ago by Sarah Kim</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-gray-400">
+                        <div class="flex -space-x-2 mr-2">
+                            <img alt="member" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsqJ6SXH4JNI5bdWNFxMhmowzd6An42kseiv7sj4L_l9uzh2V5ACwt4_3ws1iS_4_75QBRu128_93iYSHQTLBnplyfecc9HwrdGc_3YmdgQH8eOfVUbNacpkBLdZNCocUG7AfR8UWjD0flV1xbD-2ySk_9VrL4tFtDTfdbcNU9Am0s3EBl48sy5Mr4XzLuo0AbhxXYpAzy_t_xa7dc0P4hwMIxv7gpkGqynBCyUmAHloiz9fNGmfum9NzV6PVKHCzmfktUXRp0o7c"/>
+                            <img alt="member" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXGTrUrZo05p_X4CMFhPJoSL13Y8dTHEFUflWH9StqCpGYx8nacluuvfR9VTMRSR775-2FU3ayvTvnCfWcT6eAil6EwX_UMbspV0d0LpByfmgowBA9OJJJFYLjCziqBTwTUeJkxb5XLdzuPWQgn6sA2bxZrJBEaKFvqTWc1CqdOcx35GQVdXvMqfsV2IFggDVPvSgpmYFl2_f0PNDo8HhfSkRJu49VWYlVajMPyDRtu1McN-_OBU9_BGoIrJmgrinS5C9cgPQCLWk"/>
+                        </div>
+                        <button class="hover:text-primary">
+                            <span class="material-icons-outlined">more_vert</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
+                    <div class="flex items-center gap-6">
+                        <div class="w-24 text-center shrink-0">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                    In Review
+                                </span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors cursor-pointer">Q3 Marketing Campaign</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Updated yesterday by John Doe</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-gray-400">
+                        <div class="flex -space-x-2 mr-2">
+                            <img alt="member" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfK-4G5KWyI10MqBGmzdDFwR7lqbKGXQeEI5ms0EOaeNsok_dM1cTqXfpmOXw-LgxRgJrIKqm_Fb6EIs7yIojK8obRVmEG1dzRoEGQRj7YcgGtcVeMaMumN8fJ7mZP1EnMf2tQSbK1sP8LbHFO9KwB6a3pgJ_4bScod2FHVBD4i34G2eHaxwCpmf-cYPN5YwW9USIGScQShFR-FfKf8tvbc6JqS5PsiTTHcX4ppDQtaDsjmrc_rS41YyV2VhmK672Iop3P2kumP5k"/>
+                        </div>
+                        <button class="hover:text-primary">
+                            <span class="material-icons-outlined">more_vert</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
+                    <div class="flex items-center gap-6">
+                        <div class="w-24 text-center shrink-0">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                    Planning
+                                </span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors cursor-pointer">Internal Ops Tool</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Updated 3 days ago by Mike Ross</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-gray-400">
+                        <div class="flex -space-x-2 mr-2">
+                            <img alt="member" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbmCrEEKRKAoxERD6Pun0aAFp-vsAglzytdT7oOfdHv2paEG59XXEZVYoYgHXD4E3YKyc9ATTaHJFhaW1SYiDqseiWVwh22nrbU7I9XPnT7IdxoVpytNfJEFg0w7w2WrsYZgaOrPuF0uxNMm-76rUkBT7AJ82ejGSS0FKwy8K3LXwwMTzSHINmwHCXallwEYFZXqCP4f5LEfqpWPbfwMhIjwLKa-4vD2QCzy2GkoLVpes6E8zCtKNojOcn9aC6wDNAEFo0o3pNhqQ"/>
+                            <img alt="member" class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVDzp841Q9ZBkaA0BbOtNKiiVXM-4ItBxanaOXpi8Qwm49x0pvz9v-ExG23OFgls6-AMsd0q4gYVsiXuYxvHO-3910wE-jpAWmethjXIi118oklL1EhMsQfyUt-W8yvJp5Y6HBXGAMMgaTLTICQnBys5e9WjbCSgIrsf3qLHxlQ7UNzzSK88y3mBdy4e5kO-iAZasw0GKbQEOF8syv2tCiSiurhbVkEOkQ77tK-mrUifk3R7ykOnZMVGRVasADAys9r3L2nipyg6I"/>
+                            <div class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-600 dark:text-gray-300 font-medium">+2</div>
+                        </div>
+                        <button class="hover:text-primary">
+                            <span class="material-icons-outlined">more_vert</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between group">
+                    <div class="flex items-center gap-6">
+                        <div class="w-24 text-center shrink-0">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                    On Hold
+                                </span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors cursor-pointer">Legacy System Migration</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Updated 1 week ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-gray-400">
+                        <div class="flex -space-x-2 mr-2">
+                            <div class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                <span class="material-icons-outlined text-sm">person</span>
+                            </div>
+                        </div>
+                        <button class="hover:text-primary">
+                            <span class="material-icons-outlined">more_vert</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark p-4 shrink-0">
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                <p>© 2023 Company Corp. All rights reserved.</p>
+                <div class="flex gap-4 mt-2 md:mt-0">
+                    <a class="hover:text-primary" href="#">Contact Us</a>
+                    <a class="hover:text-primary" href="#">Privacy Policy</a>
+                    <a class="hover:text-primary" href="#">Terms of Service</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <aside class="w-72 bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark hidden xl:flex flex-col shrink-0">
+        <div class="p-4 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+            <h2 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">Silo History</h2>
+            <button class="text-gray-400 hover:text-primary">
+                <span class="material-icons-outlined text-sm">refresh</span>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4">
+            <div class="relative pl-4 border-l border-gray-200 dark:border-gray-700 space-y-6">
+                <div class="relative">
+                    <div class="absolute -left-[21px] bg-primary h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-gray-800"></div>
+                    <p class="text-xs text-gray-400 mb-0.5">10 mins ago</p>
+                    <p class="text-sm text-gray-800 dark:text-gray-200 font-medium">Project "Alpha" status changed</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">From "Planning" to "Active" by <span class="text-gray-700 dark:text-gray-300">Sarah</span></p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[21px] bg-gray-300 dark:bg-gray-600 h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-gray-800"></div>
+                    <p class="text-xs text-gray-400 mb-0.5">2 hours ago</p>
+                    <p class="text-sm text-gray-800 dark:text-gray-200 font-medium">New comment on "Marketing"</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">John posted a new file.</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[21px] bg-gray-300 dark:bg-gray-600 h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-gray-800"></div>
+                    <p class="text-xs text-gray-400 mb-0.5">Yesterday</p>
+                    <p class="text-sm text-gray-800 dark:text-gray-200 font-medium">New Project Created</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">"Internal Ops Tool" created by Mike.</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[21px] bg-gray-300 dark:bg-gray-600 h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-gray-800"></div>
+                    <p class="text-xs text-gray-400 mb-0.5">2 days ago</p>
+                    <p class="text-sm text-gray-800 dark:text-gray-200 font-medium">Silo Settings Updated</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Visibility changed to Private.</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[21px] bg-gray-300 dark:bg-gray-600 h-2.5 w-2.5 rounded-full ring-4 ring-white dark:ring-gray-800"></div>
+                    <p class="text-xs text-gray-400 mb-0.5">5 days ago</p>
+                    <p class="text-sm text-gray-800 dark:text-gray-200 font-medium">Member Invited</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Alice joined the silo.</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+</body></html>

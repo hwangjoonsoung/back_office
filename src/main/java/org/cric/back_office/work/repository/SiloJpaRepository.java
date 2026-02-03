@@ -9,5 +9,5 @@ import java.util.List;
 public interface SiloJpaRepository extends JpaRepository<Silo, Long> {
     List<Silo> findAllByIsDeleted(Boolean isDeleted);
 
-    List<Project> findProjectBySiloId(Long id);
+    List<Project> findProjectBy(Long id);
 }
